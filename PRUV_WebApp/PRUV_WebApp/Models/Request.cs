@@ -6,6 +6,7 @@ namespace PRUV_WebApp.Models
     {
         public int RequestID { get; set; }
         public int RequestYear { get; set; }
+        public int BrandId { get; set; }
         public string RequestBrand { get; set; }
         public string RequestModel { get; set; }
 

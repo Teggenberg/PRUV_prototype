@@ -17,10 +17,28 @@
                 <input asp-for="RequestYear" class="form-control" />
                 <span asp-validation-for="RequestYear" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="RequestBrand" class="control-label"></label>
-                <input asp-for="RequestBrand" class="form-control" />
-                <span asp-validation-for="RequestBrand" class="text-danger"></span>
+            <div class="container">
+                <div class="text-container">
+                    <label asp-for="RequestBrand" class="control-label"></label>
+                    <input type="text" list="programmingLanguages" asp-for="RequestBrand" class="form-control" />
+                    <datalist id="programmingLanguages">
+                        <option value="Objective C">Objective C</option>
+                        <option value="C++">C++</option>
+                        <option value="C#">C#</option>
+                        <option value="Cobol">Cobol</option>
+                        <option value="Go">Go</option>
+                        <option value="Java">Java</option>
+                        <option value="JavaScript">JavaScript</option>
+                        <option value="Python">Python</option>
+                        <option value="PHP">PHP</option>
+                        <option value="Pascal">Pascal</option>
+                        <option value="Perl">Perl</option>
+                        <option value="R">R</option>
+                        <option value="Swift">Swift</option>
+                    </datalist>
+                </div>
+            
+                
             </div>
             <div class="form-group">
                 <label asp-for="RequestModel" class="control-label"></label>
