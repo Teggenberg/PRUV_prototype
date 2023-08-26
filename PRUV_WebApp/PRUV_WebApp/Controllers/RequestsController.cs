@@ -7,6 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PRUV_WebApp.Data;
 using PRUV_WebApp.Models;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
+using System.Text;
+using Microsoft.Data.SqlClient;
 
 namespace PRUV_WebApp.Controllers
 {
@@ -62,9 +67,37 @@ namespace PRUV_WebApp.Controllers
         }
 
         // GET: Requests/Create
-        public IActionResult Create()
+        public async Task <IActionResult> Create()
         {
+            List<string> brands = new List<string>();
+           
+
+            System.Diagnostics.Debug.WriteLine("hello");
+            string mainconn = "Server=localhost\\SQLEXPRESS;Database=PRUV;Trusted_Connection=True;";
+            SqlConnection sqlconn = new SqlConnection(mainconn);
+            string sqlquery = "select * from Brand";
+            SqlCommand sqlcomm = new SqlCommand(sqlquery, sqlconn);
+            sqlconn.Open();
+            SqlDataAdapter adapter = new SqlDataAdapter(sqlcomm);
+            DataTable dt = new DataTable();
+            adapter.Fill(dt);
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+
+
+
+
+
+                brands.Add(dt.Rows[i][1].ToString());
+                //System.Diagnostics.Debug.WriteLine(i);
+            }
+
+            ViewBag.Roles = new SelectList(brands);
+
             return View();
+
+           
+
         }
 
         // POST: Requests/Create
@@ -81,6 +114,35 @@ namespace PRUV_WebApp.Controllers
                 return RedirectToAction(nameof(Index));
             }
             return View(request);
+        }
+
+        private static List<SelectListItem> PopulateBrands()
+        {
+            List<SelectListItem> items = new List<SelectListItem>();
+            string constr = "Server=localhost\\SQLEXPRESS;Database=PRUV;Trusted_Connection=True;";
+            using (SqlConnection con = new SqlConnection(constr))
+            {
+                string query = " SELECT Name, Id FROM Brand";
+                using (SqlCommand cmd = new SqlCommand(query))
+                {
+                    cmd.Connection = con;
+                    con.Open();
+                    using (SqlDataReader sdr = cmd.ExecuteReader())
+                    {
+                        while (sdr.Read())
+                        {
+                            items.Add(new SelectListItem
+                            {
+                                Text = sdr["Name"].ToString(),
+                                Value = sdr["Id"].ToString()
+                            });
+                        }
+                    }
+                    con.Close();
+                }
+            }
+
+            return items;
         }
 
         // GET: Requests/Edit/5
