@@ -105,8 +105,21 @@ namespace PRUV_WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("RequestID,RequestYear,RequestBrand,RequestModel")] Request request)
+        public async Task<IActionResult> Create([Bind("RequestID,RequestYear,RequestBrand,RequestModel")] Request request, string RequestBrand)
         {
+            int f ;
+            string mainconn2 = "Server=localhost\\SQLEXPRESS;Database=PRUV;Trusted_Connection=True;";
+            SqlConnection sqlconn = new SqlConnection(mainconn2);
+            string sqlquery2 = $"select * from Brand where Name = '{RequestBrand}'";
+            System.Diagnostics.Debug.WriteLine(sqlquery2);
+            SqlCommand sqlcomm2 = new SqlCommand(sqlquery2, sqlconn);
+            sqlconn.Open();
+            SqlDataAdapter adapter2 = new SqlDataAdapter(sqlcomm2);
+            DataTable dt2 = new DataTable();
+            adapter2.Fill(dt2);
+            int.TryParse(dt2.Rows[0][0].ToString(), out f);
+            request.BrandId = f;
+            System.Diagnostics.Debug.WriteLine(RequestBrand);
             if (ModelState.IsValid)
             {
                 _context.Add(request);
