@@ -73,6 +73,7 @@ namespace PRUV_WebApp.Controllers
            
 
             System.Diagnostics.Debug.WriteLine("hello");
+
             string mainconn = "Server=localhost\\SQLEXPRESS;Database=PRUV;Trusted_Connection=True;";
             SqlConnection sqlconn = new SqlConnection(mainconn);
             string sqlquery = "select * from Brand";

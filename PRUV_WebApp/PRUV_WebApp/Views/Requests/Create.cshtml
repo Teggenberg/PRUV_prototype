@@ -22,16 +22,51 @@
             </div>
             <label asp-for="RequestBrand" class="control-label"></label>
             
-            @Html.DropDownList("RequestBrand", ViewBag.Roles, "Select Brand", new {@class="form-control"})
+            @Html.DropDownList("RequestBrand", ViewBag.Roles, "Select Brand", new { @id="dropdownid", @class="form-control"})
+            <div id="result"></div>
+
+            <script>
+                var brandId = $("#dropdownid").val();
+                result.innerText = brandId;
+            </script>
             
-            
+            <script>
+                
+
+                    dropdownid.onchange = function () {
+
+                         result.innerText = this.value;
+                        
+
+                        if (this.value.includes('Fender')) {
+
+                            
+                            console.log('Fender');
+                            
+                                <label asp -for= "RequestYear" class= "control-label" > </label>
+                                <input asp -for= "RequestYear" class= "form-control" />
+                                <span asp - validation -for= "RequestYear" class= "text-danger" > </span>
+                             
+
+                        } else {
+
+                            console.log('Nope')
+                        }
+                    }
+               
+            </script>
+
+
+
+
+
             <div class="form-group">
                 <label asp-for="RequestModel" class="control-label"></label>
                 <input asp-for="RequestModel" class="form-control" />
                 <span asp-validation-for="RequestModel" class="text-danger"></span>
             </div>
             <br>
-            <br />
+            <br>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
