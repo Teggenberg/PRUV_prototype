@@ -7,6 +7,7 @@
 
 
 
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
 <h1>Create</h1>
 
 <h4>Request</h4>
@@ -20,42 +21,50 @@
                 <input asp-for="RequestYear" class="form-control" />
                 <span asp-validation-for="RequestYear" class="text-danger"></span>
             </div>
-            <label asp-for="RequestBrand" class="control-label"></label>
             
-            @Html.DropDownList("RequestBrand", ViewBag.Roles, "Select Brand", new { @id="dropdownid", @class="form-control"})
+            <label asp-for="RequestBrand" class="control-label">Enter Brand</label>
+            
+            @Html.DropDownList("RequestBrand", ViewBag.Roles, "Select Brand", new { id="brands", @class="form-control"})
             <div id="result"></div>
 
-            <script>
-                var brandId = $("#dropdownid").val();
-                result.innerText = brandId;
-            </script>
-            
-            <script>
+            <script type="text/javascript">
+
                 
 
-                    dropdownid.onchange = function () {
+                $(function () {
 
-                         result.innerText = this.value;
+                    //On page load, update the visiblity
+                    var v = $("#brands").val();
+                    UpdateDivVisibility(v);
+
+                    //When user changes the dropdown, update visibility
+                    $("#brands").change(function (e) {
+                        var v = $("#brands").val();
+                        UpdateDivVisibility(v);
+                    });
+
+                });
+
+                function UpdateDivVisibility(isVisible) {
+                    if (isVisible == "Other") {
+                        $("#newBrand").show();
+                        //
                         
-
-                        if (this.value.includes('Fender')) {
-
-                            
-                            console.log('Fender');
-                            
-                                <label asp -for= "RequestYear" class= "control-label" > </label>
-                                <input asp -for= "RequestYear" class= "form-control" />
-                                <span asp - validation -for= "RequestYear" class= "text-danger" > </span>
-                             
-
-                        } else {
-
-                            console.log('Nope')
-                        }
                     }
-               
-            </script>
+                    else {
+                       // 
+                        $("#newBrand").hide();
+                        //$("#newBrand").val($("#brands").val(););
+                    }
+                }
 
+            </script>
+            
+            <div class="form-group" id="newBrand">
+                <label asp-for="NewBrand" class="control-label">Enter Brand</label>
+                <input asp-for="NewBrand" class="form-control" />
+                <span asp-validation-for="RequestBrand" class="text-danger"></span>
+            </div>
 
 
 

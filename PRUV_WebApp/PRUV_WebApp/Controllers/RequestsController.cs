@@ -17,6 +17,7 @@ namespace PRUV_WebApp.Controllers
 {
     public class RequestsController : Controller
     {
+        public List<string> Brands { get; set; } = new List<string>() ;
         private readonly ApplicationDbContext _context;
 
         public RequestsController(ApplicationDbContext context)
@@ -66,13 +67,8 @@ namespace PRUV_WebApp.Controllers
             return View(request);
         }
 
-        // GET: Requests/Create
-        public async Task <IActionResult> Create()
+        public void PopulateBrandDropDown()
         {
-            List<string> brands = new List<string>();
-           
-
-            System.Diagnostics.Debug.WriteLine("hello");
 
             string mainconn = "Server=localhost\\SQLEXPRESS;Database=PRUV;Trusted_Connection=True;";
             SqlConnection sqlconn = new SqlConnection(mainconn);
@@ -85,16 +81,24 @@ namespace PRUV_WebApp.Controllers
             for (int i = 0; i < dt.Rows.Count; i++)
             {
 
-
-
-
-
-                brands.Add(dt.Rows[i][1].ToString());
-                //System.Diagnostics.Debug.WriteLine(i);
+                Brands.Add(dt.Rows[i][1].ToString()!);
+                
             }
 
-            ViewBag.Roles = new SelectList(brands);
+            ViewBag.Roles = new SelectList(Brands);
 
+        }
+
+        // GET: Requests/Create
+        public async Task <IActionResult> Create()
+        {
+            
+           
+
+            System.Diagnostics.Debug.WriteLine("hello");
+            PopulateBrandDropDown();
+            
+            
             return View();
 
            
@@ -106,58 +110,74 @@ namespace PRUV_WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("RequestID,RequestYear,RequestBrand,RequestModel")] Request request, string RequestBrand)
+        public async Task<IActionResult> Create([Bind("RequestID,RequestYear,RequestBrand,RequestModel")] Request request, string RequestBrand, string NewBrand)
         {
+            
+            if(RequestBrand == "Other")
+            {
+                RequestBrand = NewBrand;
+                request.RequestBrand = RequestBrand;
+                try
+                {
+                    InsertNewBrand(NewBrand);
+
+                }
+                catch
+                {
+                    System.Diagnostics.Debug.WriteLine("Duplicate Entry");
+                }
+
+            }
+            
+            
             int f ;
             string mainconn2 = "Server=localhost\\SQLEXPRESS;Database=PRUV;Trusted_Connection=True;";
-            SqlConnection sqlconn = new SqlConnection(mainconn2);
-            string sqlquery2 = $"select * from Brand where Name = '{RequestBrand}'";
+            
+            SqlConnection sqlconn2 = new SqlConnection(mainconn2);
+            
+            
+            
+            
+            string sqlquery2 = $"select * from Brand where Name = '{request.RequestBrand}'";
             System.Diagnostics.Debug.WriteLine(sqlquery2);
-            SqlCommand sqlcomm2 = new SqlCommand(sqlquery2, sqlconn);
-            sqlconn.Open();
+            SqlCommand sqlcomm2 = new SqlCommand(sqlquery2, sqlconn2);
+
+            sqlconn2.Open();
             SqlDataAdapter adapter2 = new SqlDataAdapter(sqlcomm2);
             DataTable dt2 = new DataTable();
             adapter2.Fill(dt2);
             int.TryParse(dt2.Rows[0][0].ToString(), out f);
             request.BrandId = f;
             System.Diagnostics.Debug.WriteLine(RequestBrand);
-            if (ModelState.IsValid)
+            System.Diagnostics.Debug.WriteLine(request.RequestID);
+            System.Diagnostics.Debug.WriteLine(request.RequestModel);
+            System.Diagnostics.Debug.WriteLine(request.RequestBrand);
+
+            if (true)
             {
                 _context.Add(request);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            PopulateBrandDropDown();
             return View(request);
         }
 
-        private static List<SelectListItem> PopulateBrands()
+        public void InsertNewBrand(string newBrand)
         {
-            List<SelectListItem> items = new List<SelectListItem>();
-            string constr = "Server=localhost\\SQLEXPRESS;Database=PRUV;Trusted_Connection=True;";
-            using (SqlConnection con = new SqlConnection(constr))
-            {
-                string query = " SELECT Name, Id FROM Brand";
-                using (SqlCommand cmd = new SqlCommand(query))
-                {
-                    cmd.Connection = con;
-                    con.Open();
-                    using (SqlDataReader sdr = cmd.ExecuteReader())
-                    {
-                        while (sdr.Read())
-                        {
-                            items.Add(new SelectListItem
-                            {
-                                Text = sdr["Name"].ToString(),
-                                Value = sdr["Id"].ToString()
-                            });
-                        }
-                    }
-                    con.Close();
-                }
-            }
+            string mainconn2 = "Server=localhost\\SQLEXPRESS;Database=PRUV;Trusted_Connection=True;";
+            SqlConnection sqlconn = new SqlConnection(mainconn2);
+           
+            string sqlquery = $"insert into Brand (Name) values ('{newBrand}')";
+            
+            SqlCommand sqlcomm = new SqlCommand(sqlquery, sqlconn);
+            //SqlDataAdapter adapter = new SqlDataAdapter(sqlcomm);
+            sqlconn.Open();
+            sqlcomm.ExecuteNonQuery();
 
-            return items;
         }
+
+
 
         // GET: Requests/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -180,7 +200,7 @@ namespace PRUV_WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("RequestID,RequestYear,RequestBrand,RequestModel")] Request request)
+        public async Task<IActionResult> Edit(int id, [Bind("RequestID,RequestYear,NewBrand,RequestBrand,RequestModel")] Request request)
         {
             if (id != request.RequestID)
             {

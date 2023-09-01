@@ -10,6 +10,8 @@ namespace PRUV_WebApp.Models
         public string RequestBrand { get; set; }
         public string RequestModel { get; set; }
 
+        public string NewBrand { get; set; }
+
         public Request()
         {
                 
