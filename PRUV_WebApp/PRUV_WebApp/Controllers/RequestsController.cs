@@ -12,6 +12,9 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Text;
 using Microsoft.Data.SqlClient;
+using System.Net.Mail;
+using System.Web;
+using Microsoft.EntityFrameworkCore.ValueGeneration.Internal;
 
 namespace PRUV_WebApp.Controllers
 {
@@ -65,6 +68,24 @@ namespace PRUV_WebApp.Controllers
             }
 
             return View(request);
+        }
+
+        public void SendNotification(Request request)
+        {
+            MailMessage mail = new MailMessage();
+            mail.To.Add("timguitaro@yahoo.com");
+            mail.From = new MailAddress("timeggenbergergc@gmail.com");
+            mail.Subject = request.RequestYear.ToString() + " " + request.RequestBrand;
+            string Body = request.RequestModel;
+            mail.Body = Body;
+            mail.IsBodyHtml = true;
+            SmtpClient smtp = new SmtpClient();
+            smtp.Host = "smtp.gmail.com";
+            smtp.Port = 587;
+            smtp.UseDefaultCredentials = false;
+            smtp.Credentials = new System.Net.NetworkCredential("Timeggenbergergc", "wyxullvsplgdoqeu"); // Enter seders User name and password       
+            smtp.EnableSsl = true;
+            smtp.Send(mail);
         }
 
         public void PopulateBrandDropDown()
@@ -148,6 +169,7 @@ namespace PRUV_WebApp.Controllers
             adapter2.Fill(dt2);
             int.TryParse(dt2.Rows[0][0].ToString(), out f);
             request.BrandId = f;
+            request.NewBrand = NewBrand;
             System.Diagnostics.Debug.WriteLine(RequestBrand);
             System.Diagnostics.Debug.WriteLine(request.RequestID);
             System.Diagnostics.Debug.WriteLine(request.RequestModel);
@@ -157,6 +179,7 @@ namespace PRUV_WebApp.Controllers
             {
                 _context.Add(request);
                 await _context.SaveChangesAsync();
+                SendNotification(request);
                 return RedirectToAction(nameof(Index));
             }
             PopulateBrandDropDown();
