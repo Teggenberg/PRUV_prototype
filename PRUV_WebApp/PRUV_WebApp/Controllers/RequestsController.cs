@@ -73,10 +73,10 @@ namespace PRUV_WebApp.Controllers
         public void SendNotification(Request request)
         {
             MailMessage mail = new MailMessage();
-            mail.To.Add("timguitaro@yahoo.com");
+            mail.To.Add("VintageBuys@guitarcenter.com");
             mail.From = new MailAddress("timeggenbergergc@gmail.com");
             mail.Subject = request.RequestYear.ToString() + " " + request.RequestBrand;
-            string Body = request.RequestModel;
+            string Body = request.RequestModel + "\n\nHello guys, testing the application...";
             mail.Body = Body;
             mail.IsBodyHtml = true;
             SmtpClient smtp = new SmtpClient();
@@ -170,6 +170,7 @@ namespace PRUV_WebApp.Controllers
             int.TryParse(dt2.Rows[0][0].ToString(), out f);
             request.BrandId = f;
             request.NewBrand = NewBrand;
+            if (request.NewBrand == null) request.NewBrand = " ";
             System.Diagnostics.Debug.WriteLine(RequestBrand);
             System.Diagnostics.Debug.WriteLine(request.RequestID);
             System.Diagnostics.Debug.WriteLine(request.RequestModel);
@@ -178,6 +179,7 @@ namespace PRUV_WebApp.Controllers
             if (true)
             {
                 _context.Add(request);
+
                 await _context.SaveChangesAsync();
                 SendNotification(request);
                 return RedirectToAction(nameof(Index));
