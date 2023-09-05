@@ -3,6 +3,7 @@
     public class UserRequest
     {
         public int Id { get; set; }
+        public int StoreID { get; set; }
 
         public int? RequestID { get; set; }
         public string? RequestYear { get; set; }
@@ -14,7 +15,7 @@
 
         public int UserID { get; set; }
 
-        public bool Intiated { get; set; }
+        public bool? Intiated { get; set; }
         public int? InitiatedBy { get; set; }
 
         public DateTime? InitiatedAt { get; set; }
@@ -24,9 +25,9 @@
         public int? AskingPrice { get; set; }
         public int? Cost { get; set; }
         public float? Retail { get; set; }
-        public int Case { get; set; }
+        public int? Case { get; set; }
 
-        public DateTime Created { get; set; }
+        public DateTime? Created { get; set; }
 
 
         

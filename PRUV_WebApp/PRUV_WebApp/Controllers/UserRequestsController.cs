@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using PRUV_WebApp.Data;
 using PRUV_WebApp.Models;
@@ -12,6 +14,7 @@ namespace PRUV_WebApp.Controllers
 {
     public class UserRequestsController : Controller
     {
+        public Dictionary<string, int> Brands { get; set; } = new Dictionary<string, int>();
         private readonly ApplicationDbContext _context;
 
         public UserRequestsController(ApplicationDbContext context)
@@ -45,9 +48,32 @@ namespace PRUV_WebApp.Controllers
             return View(userRequest);
         }
 
+        public void PopulateBrandDropDown()
+        {
+
+            string mainconn = "Server=localhost\\SQLEXPRESS;Database=PRUV;Trusted_Connection=True;";
+            SqlConnection sqlconn = new SqlConnection(mainconn);
+            string sqlquery = "select * from Brand";
+            SqlCommand sqlcomm = new SqlCommand(sqlquery, sqlconn);
+            sqlconn.Open();
+            SqlDataAdapter adapter = new SqlDataAdapter(sqlcomm);
+            DataTable dt = new DataTable();
+            adapter.Fill(dt);
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+
+                Brands.Add(dt.Rows[i][1].ToString()!, int.Parse(dt.Rows[i][0].ToString()) );
+
+            }
+
+            ViewBag.BrandList = new SelectList(Brands);
+
+        }
+
         // GET: UserRequests/Create
         public IActionResult Create()
         {
+            PopulateBrandDropDown();
             return View();
         }
 
@@ -58,6 +84,7 @@ namespace PRUV_WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,RequestID,RequestYear,BrandId,RequestModel,Serial,UserID,Intiated,InitiatedBy,InitiatedAt,Details,AskingPrice,Cost,Retail,Case,Created")] UserRequest userRequest)
         {
+            PopulateBrandDropDown();
             if (ModelState.IsValid)
             {
                 _context.Add(userRequest);
