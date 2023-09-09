@@ -132,6 +132,17 @@ namespace PRUV_WebApp.Controllers
             return int.Parse(dt2.Rows[0][0].ToString()!);
         }
 
+        public void InsertNewBrand(string newBrand)
+        {
+            string mainconn2 = "Server=localhost\\SQLEXPRESS;Database=PRUV;Trusted_Connection=True;";
+            SqlConnection sqlconn = new SqlConnection(mainconn2);
+            string sqlquery = $"insert into Brand (Name) values ('{newBrand}')";
+            SqlCommand sqlcomm = new SqlCommand(sqlquery, sqlconn);
+            sqlconn.Open();
+            sqlcomm.ExecuteNonQuery();
+
+        }
+
         // GET: UserRequests/Create
         public IActionResult Create()
         {
@@ -145,9 +156,16 @@ namespace PRUV_WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,RequestID,RequestYear,RequestModel,Serial,UserID,Intiated,InitiatedBy,InitiatedAt,Details,AskingPrice,Cost,Retail,Case,Created")] UserRequest userRequest, string StoreID, string BrandId)
+        public async Task<IActionResult> Create([Bind("Id,RequestID,RequestYear,RequestModel,Serial,UserID,Intiated,InitiatedBy,InitiatedAt,Details,AskingPrice,Cost,Retail,Case,Created")] UserRequest userRequest, string StoreID, string BrandId, string newBrand)
         {
-            userRequest.BrandId = GetBrandId(BrandId);
+            if(BrandId == "Other")
+            {
+                InsertNewBrand(newBrand);
+                userRequest.BrandId = GetBrandId(newBrand);
+
+            }
+            else userRequest.BrandId = GetBrandId(BrandId);
+
             userRequest.StoreID = int.Parse(StoreID);
             userRequest.RequestID = CreateRequestID(userRequest.StoreID);
             
