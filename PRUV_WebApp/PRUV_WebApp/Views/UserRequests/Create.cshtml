@@ -7,7 +7,7 @@
 }
 
 
-
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
 <h1></h1>
 
 <h4>Pricing Request</h4>
@@ -16,11 +16,11 @@
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="StoreID" class="control-label">Location</label>
-                <input asp-for="StoreID" class="form-control" />
-                <span asp-validation-for="StoreID" class="text-danger"></span>
-            </div>
+            
+            <label asp-for="StoreID" class="control-label">Enter Brand</label>
+
+            @Html.DropDownList("StoreID", ViewBag.Locations, "Select Location", new { id="locs", @class="form-control"})
+
             <div class="form-group">
                 <label asp-for="UserID" class="control-label">Employee Number</label>
                 <input asp-for="UserID" class="form-control" />

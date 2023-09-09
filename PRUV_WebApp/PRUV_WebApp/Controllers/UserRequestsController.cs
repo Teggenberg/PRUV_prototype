@@ -14,7 +14,11 @@ namespace PRUV_WebApp.Controllers
 {
     public class UserRequestsController : Controller
     {
-        public Dictionary<string, int> Brands { get; set; } = new Dictionary<string, int>();
+        //public Dictionary<string, int> Brands { get; set; } = new Dictionary<string, int>();
+        public List<string> Brands { get; set; } = new List<string>();
+        public List<int> Locations { get; set; } = new List<int>();
+
+
         private readonly ApplicationDbContext _context;
 
         public UserRequestsController(ApplicationDbContext context)
@@ -62,7 +66,7 @@ namespace PRUV_WebApp.Controllers
             for (int i = 0; i < dt.Rows.Count; i++)
             {
 
-                Brands.Add(dt.Rows[i][1].ToString()!, int.Parse(dt.Rows[i][0].ToString()) );
+                Brands.Add(dt.Rows[i][1].ToString()!);
 
             }
 
@@ -70,10 +74,54 @@ namespace PRUV_WebApp.Controllers
 
         }
 
+        public void PopulateBrandLocationDown()
+        {
+
+            string mainconn = "Server=localhost\\SQLEXPRESS;Database=PRUV;Trusted_Connection=True;";
+            SqlConnection sqlconn = new SqlConnection(mainconn);
+            string sqlquery = "select locationId from Locations";
+            SqlCommand sqlcomm = new SqlCommand(sqlquery, sqlconn);
+            sqlconn.Open();
+            SqlDataAdapter adapter = new SqlDataAdapter(sqlcomm);
+            DataTable dt = new DataTable();
+            adapter.Fill(dt);
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+
+                Locations.Add(int.Parse(dt.Rows[i][0].ToString()!));
+
+            }
+
+            ViewBag.Locations = new SelectList(Locations);
+
+        }
+
+        public int CreateRequestID(int loc)
+        {
+            int id = 0;
+            string mainconn = "Server=localhost\\SQLEXPRESS;Database=PRUV;Trusted_Connection=True;";
+            SqlConnection sqlconn = new SqlConnection(mainconn);
+            string sqlquery = $"select count(*) from UserRequest where StoreID = {loc}";
+            SqlCommand sqlcomm = new SqlCommand(sqlquery, sqlconn);
+            sqlconn.Open();
+            SqlDataAdapter adapter = new SqlDataAdapter(sqlcomm);
+            DataTable dt = new DataTable();
+            adapter.Fill(dt);
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+
+                id = (int.Parse(dt.Rows[i][0].ToString()!));
+
+            }
+            id += loc * 100000;
+            return id;
+        }
+
         // GET: UserRequests/Create
         public IActionResult Create()
         {
             PopulateBrandDropDown();
+            PopulateBrandLocationDown();
             return View();
         }
 
@@ -82,15 +130,20 @@ namespace PRUV_WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,RequestID,RequestYear,BrandId,RequestModel,Serial,UserID,Intiated,InitiatedBy,InitiatedAt,Details,AskingPrice,Cost,Retail,Case,Created")] UserRequest userRequest)
+        public async Task<IActionResult> Create([Bind("Id,RequestID,RequestYear,BrandId,RequestModel,Serial,UserID,Intiated,InitiatedBy,InitiatedAt,Details,AskingPrice,Cost,Retail,Case,Created")] UserRequest userRequest, string StoreID)
         {
-            PopulateBrandDropDown();
+
+            userRequest.StoreID = int.Parse(StoreID);
+            userRequest.RequestID = CreateRequestID(userRequest.StoreID);
+            
             if (ModelState.IsValid)
             {
                 _context.Add(userRequest);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            PopulateBrandDropDown();
+            PopulateBrandLocationDown();
             return View(userRequest);
         }
 
