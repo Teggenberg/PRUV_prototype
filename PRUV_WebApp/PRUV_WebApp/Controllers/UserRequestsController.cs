@@ -204,7 +204,7 @@ namespace PRUV_WebApp.Controllers
 
             userRequest.StoreID = int.Parse(StoreID);
             userRequest.RequestID = CreateRequestID(userRequest.StoreID);
-            
+            bool state = ModelState.IsValid;
             if (true)
             {
                 _context.Add(userRequest);
