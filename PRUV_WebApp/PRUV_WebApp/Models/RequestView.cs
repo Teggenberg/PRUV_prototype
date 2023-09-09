@@ -1,12 +1,18 @@
-﻿using System.Drawing;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Web;
+using System.Drawing;
+using System.Linq;
 
 namespace PRUV_WebApp.Models
 {
-    public class RequestView
+    public class RequestView:DbContext
     {
-        public int Id { get; set; }
+        public DbSet<UserRequest>? Request { get; set; }
 
-        public RequestView() { }
+        public DbSet<Brand>? Brand { get; set; }
+
+        //public RequestView() { }
 
     }
 }

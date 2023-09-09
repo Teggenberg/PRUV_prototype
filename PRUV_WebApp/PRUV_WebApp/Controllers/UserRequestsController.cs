@@ -29,9 +29,18 @@ namespace PRUV_WebApp.Controllers
         // GET: UserRequests
         public async Task<IActionResult> Index()
         {
-              return _context.UserRequest != null ? 
+              /*return _context.UserRequest != null ? 
                           View(await _context.UserRequest.ToListAsync()) :
-                          Problem("Entity set 'ApplicationDbContext.UserRequest'  is null.");
+                          Problem("Entity set 'ApplicationDbContext.UserRequest'  is null.");*/
+
+
+           /* using(RequestView db = new RequestView())
+            {
+                var list = db.Request.ToList();
+                return View(list);
+            }*/
+
+            return View(GetJoinedRequests());
         }
 
         // GET: UserRequests/Details/5
@@ -94,6 +103,33 @@ namespace PRUV_WebApp.Controllers
 
             ViewBag.Locations = new SelectList(Locations);
 
+        }
+
+        public List<JoinedRequest> GetJoinedRequests()
+        {
+            var list = new List<JoinedRequest>();
+            string mainconn = "Server=localhost\\SQLEXPRESS;Database=PRUV;Trusted_Connection=True;";
+            SqlConnection sqlconn = new SqlConnection(mainconn);
+            string sqlquery = "select RequestId, StoreID, RequestYear, Brand.Name, RequestModel " +
+                "\r\nfrom UserRequest" +
+                "\r\nJoin Brand on UserRequest.BrandId = Brand.Id;";
+            SqlCommand sqlcomm = new SqlCommand(sqlquery, sqlconn);
+            sqlconn.Open();
+            SqlDataAdapter adapter = new SqlDataAdapter(sqlcomm);
+            DataTable dt = new DataTable();
+            adapter.Fill(dt);
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                JoinedRequest jr = new JoinedRequest();
+                jr.Id = int.Parse(dt.Rows[i][0].ToString()!);
+                jr.Store = int.Parse(dt.Rows[i][1].ToString()!);
+                jr.Year = dt.Rows[i][2].ToString()!;
+                jr.Brand = dt.Rows[i][3].ToString()!;
+                jr.Model = dt.Rows[i][4].ToString()!;
+                list.Add(jr);
+
+            }
+            return list;
         }
 
         public int CreateRequestID(int loc)
@@ -169,7 +205,7 @@ namespace PRUV_WebApp.Controllers
             userRequest.StoreID = int.Parse(StoreID);
             userRequest.RequestID = CreateRequestID(userRequest.StoreID);
             
-            if (ModelState.IsValid)
+            if (true)
             {
                 _context.Add(userRequest);
                 await _context.SaveChangesAsync();

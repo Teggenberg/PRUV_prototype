@@ -1,4 +1,4 @@
-﻿@model IEnumerable<PRUV_WebApp.Models.UserRequest>
+﻿@model IEnumerable<PRUV_WebApp.Models.JoinedRequest>
 
 @{
     ViewData["Title"] = "Index";
@@ -13,50 +13,22 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.RequestID)
+                @Html.DisplayNameFor(model => model.Id)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.RequestYear)
+                @Html.DisplayNameFor(model => model.Store)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.BrandId)
+                @Html.DisplayNameFor(model => model.Year)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.RequestModel)
+                @Html.DisplayNameFor(model => model.Brand)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Serial)
+                @Html.DisplayNameFor(model => model.Model)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UserID)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Intiated)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.InitiatedBy)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.InitiatedAt)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Details)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.AskingPrice)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Cost)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Retail)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Case)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Created)
-            </th>
+            
+            
             <th></th>
         </tr>
     </thead>
@@ -64,50 +36,21 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.RequestID)
+                @Html.DisplayFor(modelItem => item.Id)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.RequestYear)
+                @Html.DisplayFor(modelItem => item.Store)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.BrandId)
+                @Html.DisplayFor(modelItem => item.Year)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.RequestModel)
+                @Html.DisplayFor(modelItem => item.Brand)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Serial)
+                @Html.DisplayFor(modelItem => item.Model)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserID)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Intiated)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.InitiatedBy)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.InitiatedAt)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Details)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AskingPrice)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Cost)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Retail)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Case)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Created)
-            </td>
+       
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |

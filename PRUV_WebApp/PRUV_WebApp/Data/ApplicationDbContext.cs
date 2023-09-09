@@ -13,7 +13,7 @@ namespace PRUV_WebApp.Data
         public DbSet<PRUV_WebApp.Models.Request>? Request { get; set; }
         public DbSet<PRUV_WebApp.Models.Brand>? Brand { get; set; }
 
-        public DbSet<PRUV_WebApp.Models.RequestView>? RequestViews { get; set; }
+        //public DbSet<PRUV_WebApp.Models.RequestView>? RequestViews { get; set; }
 
         public DbSet<PRUV_WebApp.Models.UserRequest>? UserRequest { get; set; }
     }
