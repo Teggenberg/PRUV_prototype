@@ -40,19 +40,7 @@ namespace PRUV_WebApp.Controllers
         //PoST: Requests/ShowSEarchResults
         public async Task<IActionResult> ShowSearchResults(int? id)
         {
-            /*if (id == null || _context.StoreUser == null)
-            {
-                return NotFound();
-            }*/
-
-            /*var storeUser = await _context.StoreUser
-                .FirstOrDefaultAsync(m => m.EmpId == id);
-            if (storeUser == null)
-            {
-                return NotFound();
-            }
-            return View("Details", storeUser);*/
-            //int? userId = GetStoreUserId(id);
+ 
             var storeUser = await _context.StoreUser
                 .FirstOrDefaultAsync(m => m.EmpId == id);
 
@@ -66,19 +54,11 @@ namespace PRUV_WebApp.Controllers
         }
 
         public int? GetStoreUserId(int? empId)
-        {
-            
+        {       
             string mainconn = "Server=localhost\\SQLEXPRESS;Database=PRUV;Trusted_Connection=True;";
-
             SqlConnection sqlconn = new SqlConnection(mainconn);
-
-
-
-
-            string sqlquery = $"select Id from StoreUSer where EmpId = '{empId}'";
-            
+            string sqlquery = $"select Id from StoreUSer where EmpId = '{empId}'";           
             SqlCommand sqlcomm = new SqlCommand(sqlquery, sqlconn);
-
             sqlconn.Open();
             SqlDataAdapter adapter2 = new SqlDataAdapter(sqlcomm);
             DataTable dt = new DataTable();
@@ -126,11 +106,16 @@ namespace PRUV_WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
+                UserRequest ur = new UserRequest();
+                ur.StoreID = storeUser.Store;
+                ur.UserID = storeUser.EmpId;
+
                 _context.Add(storeUser);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                //return RedirectToAction(nameof(Index));
+                return RedirectToAction("Create", "UserRequests", ur);
             }
-            return View(storeUser);
+            return View("Views/UserRequests/Create");
         }
 
         // GET: StoreUsers/Edit/5

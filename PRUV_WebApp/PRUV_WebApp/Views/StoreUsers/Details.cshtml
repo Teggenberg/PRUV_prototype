@@ -10,6 +10,7 @@
     <h4>StoreUser</h4>
     <hr />
     <dl class="row">
+        
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Store)
         </dt>
@@ -34,6 +35,11 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Email)
         </dd>
+        </br>
+        <div class="form-group">
+            
+            <a class="btn btn-primary" asp-area="" asp-controller="UserRequests" asp-action="Create">Request Pricing</a>
+        </div>
     </dl>
 </div>
 <div>
