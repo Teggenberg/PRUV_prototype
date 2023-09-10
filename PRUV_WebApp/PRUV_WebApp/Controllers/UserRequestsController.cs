@@ -192,7 +192,7 @@ namespace PRUV_WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,RequestID,RequestYear,RequestModel,Serial,UserID,Intiated,InitiatedBy,InitiatedAt,Details,AskingPrice,Cost,Retail,Case,Created")] UserRequest userRequest, string StoreID, string BrandId, string newBrand)
+        public async Task<IActionResult> Create([Bind("Id,RequestID,RequestYear,RequestModel,Serial,UserID,Intiated,InitiatedBy,InitiatedAt,Details,AskingPrice,Cost,Retail,Case,Created")] UserRequest userRequest, string StoreID, string BrandId, string? newBrand)
         {
             if(BrandId == "Other")
             {
@@ -205,7 +205,7 @@ namespace PRUV_WebApp.Controllers
             userRequest.StoreID = int.Parse(StoreID);
             userRequest.RequestID = CreateRequestID(userRequest.StoreID);
             bool state = ModelState.IsValid;
-            if (true)
+            if (state)
             {
                 _context.Add(userRequest);
                 await _context.SaveChangesAsync();
