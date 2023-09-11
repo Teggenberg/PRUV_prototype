@@ -105,6 +105,29 @@ namespace PRUV_WebApp.Controllers
 
         }
 
+        public List<string> PopulateDropDown(string table, int column) 
+        {
+            List<string> list = new List<string>();
+
+            string mainconn = "Server=localhost\\SQLEXPRESS;Database=PRUV;Trusted_Connection=True;";
+            SqlConnection sqlconn = new SqlConnection(mainconn);
+            string sqlquery = $"select * from {table}";
+            SqlCommand sqlcomm = new SqlCommand(sqlquery, sqlconn);
+            sqlconn.Open();
+            SqlDataAdapter adapter = new SqlDataAdapter(sqlcomm);
+            DataTable dt = new DataTable();
+            adapter.Fill(dt);
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+
+                list.Add(dt.Rows[i][column].ToString()!);
+
+            }
+
+            return list; 
+        }
+
+
         public List<JoinedRequest> GetJoinedRequests()
         {
             var list = new List<JoinedRequest>();
@@ -184,6 +207,7 @@ namespace PRUV_WebApp.Controllers
         {
             PopulateBrandDropDown();
             PopulateBrandLocationDown();
+            ViewBag.Cases = new SelectList(PopulateDropDown("CaseOption", 1));
             return View();
         }
 
@@ -211,6 +235,7 @@ namespace PRUV_WebApp.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewBag.Cases = new SelectList(PopulateDropDown("CaseOption", 1));
             PopulateBrandDropDown();
             PopulateBrandLocationDown();
             return View(userRequest);
