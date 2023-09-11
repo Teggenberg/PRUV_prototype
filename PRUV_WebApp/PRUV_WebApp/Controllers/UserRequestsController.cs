@@ -110,7 +110,7 @@ namespace PRUV_WebApp.Controllers
             var list = new List<JoinedRequest>();
             string mainconn = "Server=localhost\\SQLEXPRESS;Database=PRUV;Trusted_Connection=True;";
             SqlConnection sqlconn = new SqlConnection(mainconn);
-            string sqlquery = "select RequestId, StoreID, RequestYear, Brand.Name, RequestModel " +
+            string sqlquery = "select UserRequest.Id, RequestId, StoreID, RequestYear, Brand.Name, RequestModel " +
                 "\r\nfrom UserRequest" +
                 "\r\nJoin Brand on UserRequest.BrandId = Brand.Id;";
             SqlCommand sqlcomm = new SqlCommand(sqlquery, sqlconn);

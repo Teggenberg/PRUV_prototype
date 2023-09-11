@@ -20,5 +20,9 @@ namespace PRUV_WebApp.Data
         //public DbSet<PRUV_WebApp.Models.RequestView>? RequestViews { get; set; }
 
         public DbSet<PRUV_WebApp.Models.StoreUser>? StoreUser { get; set; }
+
+        //public DbSet<PRUV_WebApp.Models.RequestView>? RequestViews { get; set; }
+
+        public DbSet<PRUV_WebApp.Models.CaseOption>? CaseOption { get; set; }
     }
 }
