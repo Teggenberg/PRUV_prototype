@@ -46,7 +46,7 @@ namespace PRUV_WebApp.Controllers
         // GET: UserRequests/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.UserRequest == null)
+            /*if (id == null || _context.UserRequest == null)
             {
                 return NotFound();
             }
@@ -56,9 +56,36 @@ namespace PRUV_WebApp.Controllers
             if (userRequest == null)
             {
                 return NotFound();
+            }*/
+
+            string mainconn = "Server=localhost\\SQLEXPRESS;Database=PRUV;Trusted_Connection=True;";
+            SqlConnection sqlconn = new SqlConnection(mainconn);
+            string sqlquery = "select UserRequest.Id, RequestId, StoreID, RequestYear, Brand.Name, RequestModel, CaseOption.Name " +
+                "\r\nfrom UserRequest" +
+                "\r\nJoin Brand on UserRequest.BrandId = Brand.Id" +
+                "\r\nLeft Join CaseOption on UserRequest.CaseId = CaseOption.Id" +
+                $"\r\nWhere UserRequest.Id = {id};";
+            JoinedRequest jr = new JoinedRequest();
+            SqlCommand sqlcomm = new SqlCommand(sqlquery, sqlconn);
+            sqlconn.Open();
+            SqlDataAdapter adapter = new SqlDataAdapter(sqlcomm);
+            DataTable dt = new DataTable();
+            adapter.Fill(dt);
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                
+                jr.Id = int.Parse(dt.Rows[i][0].ToString()!);
+                jr.RequestID = int.Parse(dt.Rows[i][1].ToString()!);
+                jr.Store = int.Parse(dt.Rows[i][2].ToString()!);
+                jr.Year = dt.Rows[i][2].ToString()!;
+                jr.Brand = dt.Rows[i][4].ToString()!;
+                jr.Model = dt.Rows[i][5].ToString()!;
+                jr.Case = dt.Rows[i][6].ToString()!;
+                
+
             }
 
-            return View(userRequest);
+            return View(jr);
         }
 
         public void PopulateBrandDropDown()
@@ -133,9 +160,10 @@ namespace PRUV_WebApp.Controllers
             var list = new List<JoinedRequest>();
             string mainconn = "Server=localhost\\SQLEXPRESS;Database=PRUV;Trusted_Connection=True;";
             SqlConnection sqlconn = new SqlConnection(mainconn);
-            string sqlquery = "select UserRequest.Id, RequestId, StoreID, RequestYear, Brand.Name, RequestModel " +
+            string sqlquery = "select UserRequest.Id, RequestId, StoreID, RequestYear, Brand.Name, RequestModel, CaseOption.Name " +
                 "\r\nfrom UserRequest" +
-                "\r\nJoin Brand on UserRequest.BrandId = Brand.Id;";
+                "\r\nJoin Brand on UserRequest.BrandId = Brand.Id" +
+                "\r\nLeft Join CaseOption on UserRequest.CaseId = CaseOption.Id;";
             SqlCommand sqlcomm = new SqlCommand(sqlquery, sqlconn);
             sqlconn.Open();
             SqlDataAdapter adapter = new SqlDataAdapter(sqlcomm);
@@ -145,10 +173,12 @@ namespace PRUV_WebApp.Controllers
             {
                 JoinedRequest jr = new JoinedRequest();
                 jr.Id = int.Parse(dt.Rows[i][0].ToString()!);
-                jr.Store = int.Parse(dt.Rows[i][1].ToString()!);
+                jr.RequestID = int.Parse(dt.Rows[i][1].ToString()!);
+                jr.Store = int.Parse(dt.Rows[i][2].ToString()!);
                 jr.Year = dt.Rows[i][2].ToString()!;
-                jr.Brand = dt.Rows[i][3].ToString()!;
-                jr.Model = dt.Rows[i][4].ToString()!;
+                jr.Brand = dt.Rows[i][4].ToString()!;
+                jr.Model = dt.Rows[i][5].ToString()!;
+                jr.Case = dt.Rows[i][6].ToString()!;
                 list.Add(jr);
 
             }
@@ -216,7 +246,7 @@ namespace PRUV_WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,RequestID,RequestYear,RequestModel,Serial,UserID,Intiated,InitiatedBy,InitiatedAt,Details,AskingPrice,Cost,Retail,Created")] UserRequest userRequest, string StoreID, string BrandId, string? newBrand, string? Case)
+        public async Task<IActionResult> Create([Bind("Id,RequestID,RequestYear,RequestModel,Serial,UserID,Intiated,InitiatedBy,InitiatedAt,Details,AskingPrice,Cost,Retail,Created")] UserRequest userRequest, string StoreID, string BrandId, string? newBrand, string? CaseId)
         {
             if(BrandId == "Other")
             {
@@ -226,7 +256,7 @@ namespace PRUV_WebApp.Controllers
             }
             else userRequest.BrandId = GetDBId(BrandId, "Brand");
 
-            if(Case != null) userRequest.Case = GetDBId(Case, "CaseOption");
+            if(CaseId != null) userRequest.CaseId = GetDBId(CaseId, "CaseOption");
             userRequest.StoreID = int.Parse(StoreID);
             userRequest.RequestID = CreateRequestID(userRequest.StoreID);
             bool state = ModelState.IsValid;

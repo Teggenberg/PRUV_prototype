@@ -25,7 +25,7 @@
         public int? AskingPrice { get; set; }
         public int? Cost { get; set; }
         public float? Retail { get; set; }
-        public int? Case { get; set; }
+        public int? CaseId { get; set; }
 
         public DateTime? Created { get; set; }
 
