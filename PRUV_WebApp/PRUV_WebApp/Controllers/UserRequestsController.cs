@@ -176,12 +176,12 @@ namespace PRUV_WebApp.Controllers
             return id;
         }
 
-        public int GetBrandId(string brand)
+        public int GetDBId(string name, string table)
         {
            
             string mainconn2 = "Server=localhost\\SQLEXPRESS;Database=PRUV;Trusted_Connection=True;";
             SqlConnection sqlconn2 = new SqlConnection(mainconn2);
-            string sqlquery2 = $"select * from Brand where Name = '{brand}'";
+            string sqlquery2 = $"select * from {table} where Name = '{name}'";
             System.Diagnostics.Debug.WriteLine(sqlquery2);
             SqlCommand sqlcomm2 = new SqlCommand(sqlquery2, sqlconn2);
             sqlconn2.Open();
@@ -216,16 +216,17 @@ namespace PRUV_WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,RequestID,RequestYear,RequestModel,Serial,UserID,Intiated,InitiatedBy,InitiatedAt,Details,AskingPrice,Cost,Retail,Case,Created")] UserRequest userRequest, string StoreID, string BrandId, string? newBrand)
+        public async Task<IActionResult> Create([Bind("Id,RequestID,RequestYear,RequestModel,Serial,UserID,Intiated,InitiatedBy,InitiatedAt,Details,AskingPrice,Cost,Retail,Created")] UserRequest userRequest, string StoreID, string BrandId, string? newBrand, string? Case)
         {
             if(BrandId == "Other")
             {
                 InsertNewBrand(newBrand);
-                userRequest.BrandId = GetBrandId(newBrand);
+                userRequest.BrandId = GetDBId(newBrand, "Brand");
 
             }
-            else userRequest.BrandId = GetBrandId(BrandId);
+            else userRequest.BrandId = GetDBId(BrandId, "Brand");
 
+            if(Case != null) userRequest.Case = GetDBId(Case, "CaseOption");
             userRequest.StoreID = int.Parse(StoreID);
             userRequest.RequestID = CreateRequestID(userRequest.StoreID);
             bool state = ModelState.IsValid;

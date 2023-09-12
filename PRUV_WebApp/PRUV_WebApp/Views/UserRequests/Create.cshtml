@@ -102,9 +102,9 @@
                 <span asp-validation-for="AskingPrice" class="text-danger"></span>
             </div>
           
-            <label asp-for="BrandId" class="control-label">Brand</label>
+            <label asp-for="BrandId" class="control-label">Case</label>
 
-            @Html.DropDownList("Case", ViewBag.Cases, "Case", new { id="case", @class="form-control"})
+            @Html.DropDownList("Case", ViewBag.Cases, "Select Option", new { id="caseOption", @class="form-control"})
             <br/>
             <br/>
           
