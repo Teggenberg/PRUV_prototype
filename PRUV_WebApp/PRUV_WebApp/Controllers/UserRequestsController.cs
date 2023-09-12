@@ -77,7 +77,7 @@ namespace PRUV_WebApp.Controllers
                 jr.Id = int.Parse(dt.Rows[i][0].ToString()!);
                 jr.RequestID = int.Parse(dt.Rows[i][1].ToString()!);
                 jr.Store = int.Parse(dt.Rows[i][2].ToString()!);
-                jr.Year = dt.Rows[i][2].ToString()!;
+                jr.Year = dt.Rows[i][3].ToString()!;
                 jr.Brand = dt.Rows[i][4].ToString()!;
                 jr.Model = dt.Rows[i][5].ToString()!;
                 jr.Case = dt.Rows[i][6].ToString()!;
@@ -175,7 +175,7 @@ namespace PRUV_WebApp.Controllers
                 jr.Id = int.Parse(dt.Rows[i][0].ToString()!);
                 jr.RequestID = int.Parse(dt.Rows[i][1].ToString()!);
                 jr.Store = int.Parse(dt.Rows[i][2].ToString()!);
-                jr.Year = dt.Rows[i][2].ToString()!;
+                jr.Year = dt.Rows[i][3].ToString()!;
                 jr.Brand = dt.Rows[i][4].ToString()!;
                 jr.Model = dt.Rows[i][5].ToString()!;
                 jr.Case = dt.Rows[i][6].ToString()!;
