@@ -11,5 +11,6 @@
         public string? Model { get; set; }
 
         public string? Case { get; set; }
+        public DateTime? Created { get; set; }
     }
 }

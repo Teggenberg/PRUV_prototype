@@ -160,7 +160,7 @@ namespace PRUV_WebApp.Controllers
             var list = new List<JoinedRequest>();
             string mainconn = "Server=localhost\\SQLEXPRESS;Database=PRUV;Trusted_Connection=True;";
             SqlConnection sqlconn = new SqlConnection(mainconn);
-            string sqlquery = "select UserRequest.Id, RequestId, StoreID, RequestYear, Brand.Name, RequestModel, CaseOption.Name " +
+            string sqlquery = "select UserRequest.Id, RequestId, StoreID, RequestYear, Brand.Name, RequestModel, CaseOption.Name, Created " +
                 "\r\nfrom UserRequest" +
                 "\r\nJoin Brand on UserRequest.BrandId = Brand.Id" +
                 "\r\nLeft Join CaseOption on UserRequest.CaseId = CaseOption.Id;";
@@ -179,6 +179,8 @@ namespace PRUV_WebApp.Controllers
                 jr.Brand = dt.Rows[i][4].ToString()!;
                 jr.Model = dt.Rows[i][5].ToString()!;
                 jr.Case = dt.Rows[i][6].ToString()!;
+                jr.Created = DateTime.Parse(dt.Rows[i][7].ToString()!);
+
                 list.Add(jr);
 
             }
@@ -259,6 +261,7 @@ namespace PRUV_WebApp.Controllers
             if(CaseId != null) userRequest.CaseId = GetDBId(CaseId, "CaseOption");
             userRequest.StoreID = int.Parse(StoreID);
             userRequest.RequestID = CreateRequestID(userRequest.StoreID);
+            userRequest.Created = DateTime.Now;
             bool state = ModelState.IsValid;
             if (state)
             {
