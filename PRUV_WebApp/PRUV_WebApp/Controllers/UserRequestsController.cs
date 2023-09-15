@@ -29,38 +29,20 @@ namespace PRUV_WebApp.Controllers
         // GET: UserRequests
         public async Task<IActionResult> Index()
         {
-              /*return _context.UserRequest != null ? 
-                          View(await _context.UserRequest.ToListAsync()) :
-                          Problem("Entity set 'ApplicationDbContext.UserRequest'  is null.");*/
-
-
-           /* using(RequestView db = new RequestView())
-            {
-                var list = db.Request.ToList();
-                return View(list);
-            }*/
-
+            
+             
+            Response.Headers.Add("Refresh", "5");
             return View(GetJoinedRequests());
         }
 
         // GET: UserRequests/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            /*if (id == null || _context.UserRequest == null)
-            {
-                return NotFound();
-            }
-
-            var userRequest = await _context.UserRequest
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (userRequest == null)
-            {
-                return NotFound();
-            }*/
+     
 
             string mainconn = "Server=localhost\\SQLEXPRESS;Database=PRUV;Trusted_Connection=True;";
             SqlConnection sqlconn = new SqlConnection(mainconn);
-            string sqlquery = "select UserRequest.Id, RequestId, StoreID, RequestYear, Brand.Name, RequestModel, CaseOption.Name " +
+            string sqlquery = "select UserRequest.Id, RequestId, StoreID, RequestYear, Brand.Name, RequestModel, CaseOption.Name, CONVERT(VARCHAR(19),Created,100) " +
                 "\r\nfrom UserRequest" +
                 "\r\nJoin Brand on UserRequest.BrandId = Brand.Id" +
                 "\r\nLeft Join CaseOption on UserRequest.CaseId = CaseOption.Id" +
@@ -81,6 +63,7 @@ namespace PRUV_WebApp.Controllers
                 jr.Brand = dt.Rows[i][4].ToString()!;
                 jr.Model = dt.Rows[i][5].ToString()!;
                 jr.Case = dt.Rows[i][6].ToString()!;
+                jr.Created = dt.Rows[i][7].ToString();
                 
 
             }
@@ -160,7 +143,7 @@ namespace PRUV_WebApp.Controllers
             var list = new List<JoinedRequest>();
             string mainconn = "Server=localhost\\SQLEXPRESS;Database=PRUV;Trusted_Connection=True;";
             SqlConnection sqlconn = new SqlConnection(mainconn);
-            string sqlquery = "select UserRequest.Id, RequestId, StoreID, RequestYear, Brand.Name, RequestModel, CaseOption.Name, Created " +
+            string sqlquery = "select UserRequest.Id, RequestId, StoreID, RequestYear, Brand.Name, RequestModel, CaseOption.Name, datediff(minute, Created, GetDate()) " +
                 "\r\nfrom UserRequest" +
                 "\r\nJoin Brand on UserRequest.BrandId = Brand.Id" +
                 "\r\nLeft Join CaseOption on UserRequest.CaseId = CaseOption.Id;";
@@ -179,8 +162,9 @@ namespace PRUV_WebApp.Controllers
                 jr.Brand = dt.Rows[i][4].ToString()!;
                 jr.Model = dt.Rows[i][5].ToString()!;
                 jr.Case = dt.Rows[i][6].ToString()!;
-                jr.Created = DateTime.Parse(dt.Rows[i][7].ToString()!);
-
+                jr.Created = dt.Rows[i][7].ToString() + " minutes ago";
+                System.Diagnostics.Debug.WriteLine(dt.Rows[i][7]);
+                System.Diagnostics.Debug.WriteLine(jr.Created);
                 list.Add(jr);
 
             }
