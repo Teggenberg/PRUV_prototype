@@ -207,6 +207,28 @@ namespace PRUV_WebApp.Controllers
             return int.Parse(dt2.Rows[0][0].ToString()!);
         }
 
+        public byte[]? ConvertImageFile(IFormFile imageFile)
+        {
+            byte[]? image = null;
+
+            if(imageFile.Length > 0)
+            {
+                using(var ms = new MemoryStream())
+                {
+                    imageFile.CopyTo(ms);
+                    image = ms.ToArray();
+
+                }
+
+                
+            }
+
+
+            return image;
+
+
+        }
+
         public void InsertNewBrand(string newBrand)
         {
             string mainconn2 = "Server=localhost\\SQLEXPRESS;Database=PRUV;Trusted_Connection=True;";

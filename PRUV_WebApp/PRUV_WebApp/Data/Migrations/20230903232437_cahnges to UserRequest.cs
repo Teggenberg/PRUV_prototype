@@ -27,7 +27,7 @@ namespace PRUV_WebApp.Data.Migrations
                 oldType: "datetime2");
 
             migrationBuilder.AlterColumn<int>(
-                name: "Case",
+                name: "CaseId",
                 table: "UserRequest",
                 type: "int",
                 nullable: true,
@@ -69,7 +69,7 @@ namespace PRUV_WebApp.Data.Migrations
                 oldNullable: true);
 
             migrationBuilder.AlterColumn<int>(
-                name: "Case",
+                name: "CaseId",
                 table: "UserRequest",
                 type: "int",
                 nullable: false,
