@@ -105,6 +105,17 @@
             <label asp-for="BrandId" class="control-label">Case</label>
 
             @Html.DropDownList("CaseId", ViewBag.Cases, "Select Option", new { id="caseOption", @class="form-control"})
+
+            <div class="row">
+                <div class="col-md-2">
+                    <label>Photo: </label>
+
+                </div>
+                <div class="col-md-10">
+                    <input id="txtFile" type ="file" value="Upload File" style="width:100%;"/>
+                </div>
+
+            </div>
             <br/>
             <br/>
           
