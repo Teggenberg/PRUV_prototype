@@ -9,6 +9,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using PRUV_WebApp.Data;
 using PRUV_WebApp.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace PRUV_WebApp.Controllers
 {
@@ -207,7 +208,20 @@ namespace PRUV_WebApp.Controllers
             return int.Parse(dt2.Rows[0][0].ToString()!);
         }
 
-        public byte[]? ConvertImageFile(IFormFile imageFile)
+        public void AddImage(int? requestId, byte[]? image)
+        {
+
+            string mainconn = "Server=localhost\\SQLEXPRESS;Database=PRUV;Trusted_Connection=True;";
+            SqlConnection sqlconn = new SqlConnection(mainconn);
+            string sqlquery = $"insert into RequestImage (RequestId,RequestImage) values ('{requestId},{image}')";
+            System.Diagnostics.Debug.WriteLine(sqlquery);
+            SqlCommand sqlcomm = new SqlCommand(sqlquery, sqlconn);
+            sqlconn.Open();
+            sqlcomm.ExecuteNonQuery();
+
+        }
+
+        public byte[]? ConvertImageFile(IFormFile? imageFile)
         {
             byte[]? image = null;
 
@@ -254,7 +268,7 @@ namespace PRUV_WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,RequestID,RequestYear,RequestModel,Serial,UserID,Intiated,InitiatedBy,InitiatedAt,Details,AskingPrice,Cost,Retail,Created")] UserRequest userRequest, string StoreID, string BrandId, string? newBrand, string? CaseId)
+        public async Task<IActionResult> Create([Bind("Id,RequestID,RequestYear,RequestModel,Serial,UserID,Intiated,InitiatedBy,InitiatedAt,Details,AskingPrice,Cost,Retail,Created")] UserRequest userRequest, string StoreID, string BrandId, string? newBrand, string? CaseId, IFormFile? txtFile)
         {
             if(BrandId == "Other")
             {
@@ -271,10 +285,13 @@ namespace PRUV_WebApp.Controllers
             bool state = ModelState.IsValid;
             if (state)
             {
+                AddImage(userRequest.RequestID, ConvertImageFile(txtFile));
                 _context.Add(userRequest);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
+            
             ViewBag.Cases = new SelectList(PopulateDropDown("CaseOption", 1));
             PopulateBrandDropDown();
             PopulateBrandLocationDown();
