@@ -211,10 +211,11 @@ namespace PRUV_WebApp.Controllers
 
         public void AddImage(int? requestId, byte[]? image)
         {
+            string bytes = image.ToString();
 
             string mainconn = "Server=localhost\\SQLEXPRESS;Database=PRUV;Trusted_Connection=True;";
             SqlConnection sqlconn = new SqlConnection(mainconn);
-            string sqlquery = $"insert into RequestImage (RequestId,RequestImage) values ('{requestId},{image}')";
+            string sqlquery = $"insert into RequestImage (RequestId,RequestImage) values ({requestId},CAST('{bytes}' AS VARBINARY(MAX)))";
             System.Diagnostics.Debug.WriteLine(sqlquery);
             SqlCommand sqlcomm = new SqlCommand(sqlquery, sqlconn);
             sqlconn.Open();
