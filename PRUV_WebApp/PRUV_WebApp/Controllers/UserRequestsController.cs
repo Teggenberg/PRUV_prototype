@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using PRUV_WebApp.Data;
 using PRUV_WebApp.Models;
 using Microsoft.AspNetCore.Http;
+using System.Web;
 
 namespace PRUV_WebApp.Controllers
 {
@@ -221,7 +222,7 @@ namespace PRUV_WebApp.Controllers
 
         }
 
-        public byte[]? ConvertImageFile(IFormFile? imageFile)
+        public byte[]? ConvertImageFile(IFormFile imageFile)
         {
             byte[]? image = null;
 
@@ -268,7 +269,7 @@ namespace PRUV_WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,RequestID,RequestYear,RequestModel,Serial,UserID,Intiated,InitiatedBy,InitiatedAt,Details,AskingPrice,Cost,Retail,Created")] UserRequest userRequest, string StoreID, string BrandId, string? newBrand, string? CaseId, IFormFile? txtFile)
+        public async Task<IActionResult> Create([Bind("Id,RequestID,RequestYear,RequestModel,Serial,UserID,Intiated,InitiatedBy,InitiatedAt,Details,AskingPrice,Cost,Retail,Created")] UserRequest userRequest, string StoreID, string BrandId, string? newBrand, string? CaseId,[FromForm(Name = "imageFile")] IFormFile imageFile)
         {
             if(BrandId == "Other")
             {
@@ -285,7 +286,7 @@ namespace PRUV_WebApp.Controllers
             bool state = ModelState.IsValid;
             if (state)
             {
-                AddImage(userRequest.RequestID, ConvertImageFile(txtFile));
+                AddImage(userRequest.RequestID, ConvertImageFile(imageFile));
                 _context.Add(userRequest);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

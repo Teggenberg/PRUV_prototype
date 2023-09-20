@@ -13,8 +13,8 @@
 <h4>Pricing Request</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
+    <div class="col-md-4" >
+        <form asp-action="Create" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             
             <label asp-for="StoreID" class="control-label">Location</label>
@@ -106,16 +106,25 @@
 
             @Html.DropDownList("CaseId", ViewBag.Cases, "Select Option", new { id="caseOption", @class="form-control"})
 
-            <div class="row">
+          
+            <div class="mb-3">
+               <label class="form-label">Image</label>
+               <input type="file" name="imageFile" class="form-control"
+            </div>
+            
+            @* <div class="row">
                 <div class="col-md-2">
                     <label>Photo: </label>
 
                 </div>
                 <div class="col-md-10">
-                    <input id="txtFile" type ="file" value="Upload File" style="width:100%;"/>
+                    <input id="txtFile" type="file" name="file" value="Upload File" style="width:100%;" />
+
                 </div>
 
-            </div>
+            </div> *@
+         
+
             <div class="col-md-6">
                 <img id="imgViewer" widht="200" height="200" style="border:1px solid#000000;" />
             </div>
