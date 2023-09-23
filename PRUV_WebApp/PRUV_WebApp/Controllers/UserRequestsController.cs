@@ -71,15 +71,16 @@ namespace PRUV_WebApp.Controllers
                 jr.Model = dt.Rows[i][5].ToString()!;
                 jr.Case = dt.Rows[i][6].ToString()!;
                 jr.Created = dt.Rows[i][7].ToString();
-                jr.image = Encoding.ASCII.GetBytes(dt.Rows[i][8].ToString()!);
-                
+                //jr.image = Encoding.ASCII.GetBytes(dt.Rows[i][8].ToString()!);
+                jr.image = (byte[])dt.Rows[i][8];
+
 
             }
 
-            jr.image = GetImage(Convert.ToBase64String(jr.image));
+            //jr.image = GetImage(Convert.ToBase64String(jr.image));
 
             string image = String.Format("data:image/png;base64,{0}", Convert.ToBase64String(jr.image));
-            ViewBag.Photo = "C:\\Users\\timeg\\PRUV\\PRUV_prototype\\PRUV_WebApp\\PRUV_WebApp\\Views\\UserRequests\\test.jpeg";
+            //ViewBag.Photo = image;
 
             return View(jr);
         }
