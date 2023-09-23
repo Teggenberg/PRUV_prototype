@@ -36,16 +36,21 @@ namespace PRUV_WebApp.Controllers
         public async Task<IActionResult> Index()
         {
             
-             
             Response.Headers.Add("Refresh", "5");
+            // custom class JoinedRequest holds joined table data form custom query
             return View(GetJoinedRequests());
         }
 
         // GET: UserRequests/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-     
+            JoinedRequest item = GetItemData(id);
+            return View(item);
+        }
 
+        public JoinedRequest GetItemData(int? id)
+        {
+            // joint query to gather item data from related tables
             string mainconn = "Server=localhost\\SQLEXPRESS;Database=PRUV;Trusted_Connection=True;";
             SqlConnection sqlconn = new SqlConnection(mainconn);
             string sqlquery = "select UserRequest.Id, UserRequest.RequestId, StoreID, RequestYear, Brand.Name, RequestModel, CaseOption.Name, CONVERT(VARCHAR(19),Created,100), RequestImage " +
@@ -60,9 +65,10 @@ namespace PRUV_WebApp.Controllers
             SqlDataAdapter adapter = new SqlDataAdapter(sqlcomm);
             DataTable dt = new DataTable();
             adapter.Fill(dt);
+
             for (int i = 0; i < dt.Rows.Count; i++)
             {
-                
+                // populate object with data table data
                 jr.Id = int.Parse(dt.Rows[i][0].ToString()!);
                 jr.RequestID = int.Parse(dt.Rows[i][1].ToString()!);
                 jr.Store = int.Parse(dt.Rows[i][2].ToString()!);
@@ -71,18 +77,10 @@ namespace PRUV_WebApp.Controllers
                 jr.Model = dt.Rows[i][5].ToString()!;
                 jr.Case = dt.Rows[i][6].ToString()!;
                 jr.Created = dt.Rows[i][7].ToString();
-                //jr.image = Encoding.ASCII.GetBytes(dt.Rows[i][8].ToString()!);
                 jr.image = (byte[])dt.Rows[i][8];
-
-
             }
 
-            //jr.image = GetImage(Convert.ToBase64String(jr.image));
-
-            string image = String.Format("data:image/png;base64,{0}", Convert.ToBase64String(jr.image));
-            //ViewBag.Photo = image;
-
-            return View(jr);
+            return jr;
         }
 
         public byte[] GetImage(string sBase64String)
@@ -117,7 +115,7 @@ namespace PRUV_WebApp.Controllers
 
         }
 
-        public void PopulateBrandLocationDown()
+        public void PopulateLocationDown()
         {
 
             string mainconn = "Server=localhost\\SQLEXPRESS;Database=PRUV;Trusted_Connection=True;";
@@ -302,8 +300,11 @@ namespace PRUV_WebApp.Controllers
         // GET: UserRequests/Create
         public IActionResult Create()
         {
-            PopulateBrandDropDown();
-            PopulateBrandLocationDown();
+            //PopulateBrandDropDown();
+            //PopulateLocationDown();
+
+            ViewBag.BrandList = new SelectList(PopulateDropDown("Brand", 1));
+            ViewBag.Locations = new SelectList(PopulateDropDown("Locations", 1));
             ViewBag.Cases = new SelectList(PopulateDropDown("CaseOption", 1));
             return View();
         }
@@ -339,8 +340,10 @@ namespace PRUV_WebApp.Controllers
 
             
             ViewBag.Cases = new SelectList(PopulateDropDown("CaseOption", 1));
-            PopulateBrandDropDown();
-            PopulateBrandLocationDown();
+            //PopulateBrandDropDown();
+            //PopulateLocationDown();
+            ViewBag.BrandList = new SelectList(PopulateDropDown("Brand", 1));
+            ViewBag.Locations = new SelectList(PopulateDropDown("Locations", 1));
             return View(userRequest);
         }
 
