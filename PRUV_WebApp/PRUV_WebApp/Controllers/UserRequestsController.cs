@@ -11,6 +11,10 @@ using PRUV_WebApp.Data;
 using PRUV_WebApp.Models;
 using Microsoft.AspNetCore.Http;
 using System.Web;
+using System.Text;
+using Microsoft.AspNetCore.Mvc.Routing;
+
+
 
 namespace PRUV_WebApp.Controllers
 {
@@ -44,10 +48,11 @@ namespace PRUV_WebApp.Controllers
 
             string mainconn = "Server=localhost\\SQLEXPRESS;Database=PRUV;Trusted_Connection=True;";
             SqlConnection sqlconn = new SqlConnection(mainconn);
-            string sqlquery = "select UserRequest.Id, RequestId, StoreID, RequestYear, Brand.Name, RequestModel, CaseOption.Name, CONVERT(VARCHAR(19),Created,100) " +
+            string sqlquery = "select UserRequest.Id, UserRequest.RequestId, StoreID, RequestYear, Brand.Name, RequestModel, CaseOption.Name, CONVERT(VARCHAR(19),Created,100), RequestImage " +
                 "\r\nfrom UserRequest" +
                 "\r\nJoin Brand on UserRequest.BrandId = Brand.Id" +
                 "\r\nLeft Join CaseOption on UserRequest.CaseId = CaseOption.Id" +
+                "\r\nLeft Join RequestImage on UserRequest.RequestId = RequestImage.RequestId" +
                 $"\r\nWhere UserRequest.Id = {id};";
             JoinedRequest jr = new JoinedRequest();
             SqlCommand sqlcomm = new SqlCommand(sqlquery, sqlconn);
@@ -66,11 +71,27 @@ namespace PRUV_WebApp.Controllers
                 jr.Model = dt.Rows[i][5].ToString()!;
                 jr.Case = dt.Rows[i][6].ToString()!;
                 jr.Created = dt.Rows[i][7].ToString();
+                jr.image = Encoding.ASCII.GetBytes(dt.Rows[i][8].ToString()!);
                 
 
             }
 
+            jr.image = GetImage(Convert.ToBase64String(jr.image));
+
+            string image = String.Format("data:image/png;base64,{0}", Convert.ToBase64String(jr.image));
+            ViewBag.Photo = "C:\\Users\\timeg\\PRUV\\PRUV_prototype\\PRUV_WebApp\\PRUV_WebApp\\Views\\UserRequests\\test.jpeg";
+
             return View(jr);
+        }
+
+        public byte[] GetImage(string sBase64String)
+        {
+            byte[] bytes = null;
+            if (!string.IsNullOrEmpty(sBase64String))
+            {
+                bytes = Convert.FromBase64String(sBase64String);
+            }
+            return bytes;
         }
 
         public void PopulateBrandDropDown()
@@ -216,14 +237,33 @@ namespace PRUV_WebApp.Controllers
             string mainconn = "Server=localhost\\SQLEXPRESS;Database=PRUV;Trusted_Connection=True;";
             SqlConnection sqlconn = new SqlConnection(mainconn);
             string sqlquery = $"insert into RequestImage (RequestId,RequestImage) values ({requestId},CAST('{bytes}' AS VARBINARY(MAX)))";
+            const string sql_insert_string =
+                "Insert into RequestImage (RequestId,RequestImage) values (@image_id, @image_byte_array)";
+            var byteParam = new SqlParameter("@image_byte_array", SqlDbType.VarBinary)
+            {
+                Direction = ParameterDirection.Input,
+                Size = image.Length,
+                Value = image
+            };
+
+            var imageIdParam = new SqlParameter("@image_id", SqlDbType.Int, 4)
+            {
+                Direction = ParameterDirection.Input,
+                Value = requestId
+            };
+            SqlTransaction transaction = null;
             System.Diagnostics.Debug.WriteLine(sqlquery);
-            SqlCommand sqlcomm = new SqlCommand(sqlquery, sqlconn);
+            SqlCommand sqlcomm = new SqlCommand(sql_insert_string, sqlconn, transaction);
+            sqlcomm.Parameters.Add(byteParam);
+            sqlcomm.Parameters.Add(imageIdParam);
             sqlconn.Open();
             sqlcomm.ExecuteNonQuery();
 
+            
+
         }
 
-        public byte[]? ConvertImageFile(IFormFile imageFile)
+        /*public byte[]? ConvertImageFile(IFormFile imageFile)
         {
             byte[]? image = null;
 
@@ -235,15 +275,17 @@ namespace PRUV_WebApp.Controllers
                     image = ms.ToArray();
 
                 }
+                string filePath = "C:\\Users\\timeg\\PRUV\\PRUV_prototype\\PRUV_WebApp\\PRUV_WebApp\\Views\\UserRequests\\test.jpeg" ;
+                using var stream = System.IO.File.Create(filePath);
+                stream.Write(image, 0, image.Length);
 
-                
             }
 
 
             return image;
 
 
-        }
+        }*/
 
         public void InsertNewBrand(string newBrand)
         {
@@ -270,9 +312,10 @@ namespace PRUV_WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,RequestID,RequestYear,RequestModel,Serial,UserID,Intiated,InitiatedBy,InitiatedAt,Details,AskingPrice,Cost,Retail,Created")] UserRequest userRequest, string StoreID, string BrandId, string? newBrand, string? CaseId,[FromForm(Name = "imageFile")] IFormFile imageFile)
+        public async Task<IActionResult> Create([Bind("Id,RequestID,RequestYear,RequestModel,Serial,UserID,Intiated,InitiatedBy,InitiatedAt,Details,AskingPrice,Cost,Retail,Created")] UserRequest userRequest, string StoreID, string BrandId, string? newBrand, string? CaseId,IFormFile imageFile)
         {
-            if(BrandId == "Other")
+            //[FromForm(Name = "imageFile")] 
+            if (BrandId == "Other")
             {
                 InsertNewBrand(newBrand);
                 userRequest.BrandId = GetDBId(newBrand, "Brand");
@@ -287,7 +330,7 @@ namespace PRUV_WebApp.Controllers
             bool state = ModelState.IsValid;
             if (state)
             {
-                AddImage(userRequest.RequestID, ConvertImageFile(imageFile));
+                AddImage(userRequest.RequestID, Global.ConvertImageFile(imageFile));
                 _context.Add(userRequest);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

@@ -12,5 +12,7 @@
 
         public string? Case { get; set; }
         public string? Created { get; set; }
+
+        public byte[]? image { get; set; }
     }
 }
