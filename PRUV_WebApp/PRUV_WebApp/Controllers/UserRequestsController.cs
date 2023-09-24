@@ -47,7 +47,7 @@ namespace PRUV_WebApp.Controllers
             JoinedRequest item = DBCall.GetItemData(id);
             return View(item);
         }
-
+/*
         public JoinedRequest GetItemData(int? id)
         {
             // joint query to gather item data from related tables
@@ -85,7 +85,7 @@ namespace PRUV_WebApp.Controllers
 
 
 
-        public List<string> PopulateDropDown(string table, int column, int selectedItem = 0) 
+        public List<string> PopulateDropDown(string table, int column) 
         {
             // new list that will be retunred for drop down menu
             List<string> list = new List<string>();
@@ -182,7 +182,7 @@ namespace PRUV_WebApp.Controllers
             return int.Parse(dt2.Rows[0][0].ToString()!);
         }
 
-        public string DefaultValue(int id, string table, string columnName, int column)
+        public string SetDefaultValue(int id, string table, string columnName, int column)
         {
 
             string mainconn2 = "Server=localhost\\SQLEXPRESS;Database=PRUV;Trusted_Connection=True;";
@@ -225,9 +225,6 @@ namespace PRUV_WebApp.Controllers
             sqlcomm.Parameters.Add(imageIdParam);
             sqlconn.Open();
             sqlcomm.ExecuteNonQuery();
-
-            
-
         }
 
 
@@ -240,17 +237,19 @@ namespace PRUV_WebApp.Controllers
             sqlconn.Open();
             sqlcomm.ExecuteNonQuery();
 
-        }
+        }*/
 
         // GET: UserRequests/Create
         public IActionResult Create()
         {
              
-            ViewBag.BrandList = new SelectList(PopulateDropDown("Brand", 1));
-            ViewBag.Locations = new SelectList(PopulateDropDown("Locations", 1), DefaultValue(Global.empLoc, "Locations", "LocationID", 1)) ;
-            ViewBag.Employees = new SelectList(PopulateDropDown("StoreUser", 5), DefaultValue(Global.empNum, "StoreUser", "EmpId", 5));
+            ViewBag.BrandList = new SelectList(DBCall.PopulateDropDown("Brand", 1));
+            ViewBag.Locations = new SelectList
+                (DBCall.PopulateDropDown("Locations", 1), DBCall.SetDefaultValue(Global.empLoc, "Locations", "LocationID", 1)) ;
+            ViewBag.Employees = new SelectList
+                (DBCall.PopulateDropDown("StoreUser", 5), DBCall.SetDefaultValue(Global.empNum, "StoreUser", "EmpId", 5));
 
-            ViewBag.Cases = new SelectList(PopulateDropDown("CaseOption", 1));
+            ViewBag.Cases = new SelectList(DBCall.PopulateDropDown("CaseOption", 1));
             return View();
         }
 
@@ -259,7 +258,9 @@ namespace PRUV_WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,RequestID,RequestYear,RequestModel,Serial,UserID,Intiated,InitiatedBy,InitiatedAt,Details,AskingPrice,Cost,Retail,Created")] UserRequest userRequest, string StoreID, string BrandId, string? newBrand, string? CaseId,IFormFile imageFile)
+        public async Task<IActionResult> Create
+            ([Bind("Id,RequestID,RequestYear,RequestModel,Serial,UserID,Intiated,InitiatedBy,InitiatedAt,Details,AskingPrice,Cost,Retail,Created")] 
+            UserRequest userRequest, string StoreID, string BrandId, string? newBrand, string? CaseId,IFormFile imageFile)
         {
             if(Global.empNum != 0)
             {
@@ -274,7 +275,7 @@ namespace PRUV_WebApp.Controllers
 
             if (BrandId == "Other")
             {
-                InsertNewBrand(newBrand);
+                DBCall.InsertNewBrand(newBrand);
                 userRequest.BrandId = DBCall.GetDBId(newBrand, "Brand");
 
             }
@@ -282,21 +283,21 @@ namespace PRUV_WebApp.Controllers
 
             if(CaseId != null) userRequest.CaseId = DBCall.GetDBId(CaseId, "CaseOption");
             
-            userRequest.RequestID = CreateRequestID(userRequest.StoreID);
+            userRequest.RequestID = DBCall.CreateRequestID(userRequest.StoreID);
             userRequest.Created = DateTime.Now;
             bool state = ModelState.IsValid;
             if (state)
             {
-                AddImage(userRequest.RequestID, Global.ConvertImageFile(imageFile));
+                DBCall.AddImage(userRequest.RequestID, Global.ConvertImageFile(imageFile));
                 _context.Add(userRequest);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
 
             
-            ViewBag.Cases = new SelectList(PopulateDropDown("CaseOption", 1));
-            ViewBag.BrandList = new SelectList(PopulateDropDown("Brand", 1));
-            ViewBag.Locations = new SelectList(PopulateDropDown("Locations", 1));
+            ViewBag.Cases = new SelectList(DBCall.PopulateDropDown("CaseOption", 1));
+            ViewBag.BrandList = new SelectList(DBCall.PopulateDropDown("Brand", 1));
+            ViewBag.Locations = new SelectList(DBCall.PopulateDropDown("Locations", 1));
             return View(userRequest);
         }
 

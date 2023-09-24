@@ -117,6 +117,85 @@ namespace PRUV_WebApp.Controllers
             return list;
         }
 
+        public static string SetDefaultValue(int id, string table, string columnName, int column)
+        {
+
+            //string mainconn2 = "Server=localhost\\SQLEXPRESS;Database=PRUV;Trusted_Connection=True;";
+            SqlConnection sqlconn = new SqlConnection(connectionString);
+            string sqlquery = $"select * from {table} where {columnName} = '{id}'";
+            //System.Diagnostics.Debug.WriteLine(sqlquery);
+            SqlCommand sqlcomm = new SqlCommand(sqlquery, sqlconn);
+            sqlconn.Open();
+            SqlDataAdapter adapter = new SqlDataAdapter(sqlcomm);
+            DataTable dt = new DataTable();
+            adapter.Fill(dt);
+            return dt.Rows[0][column].ToString()!;
+        }
+
+        public static void AddImage(int? requestId, byte[]? image)
+        {
+            //string bytes = image.ToString();
+
+            //string mainconn = "Server=localhost\\SQLEXPRESS;Database=PRUV;Trusted_Connection=True;";
+            SqlConnection sqlconn = new SqlConnection(connectionString);
+            //string sqlquery = $"insert into RequestImage (RequestId,RequestImage) values ({requestId},CAST('{bytes}' AS VARBINARY(MAX)))";
+            const string sql_insert_string =
+                "Insert into RequestImage (RequestId,RequestImage) values (@image_id, @image_byte_array)";
+            var byteParam = new SqlParameter("@image_byte_array", SqlDbType.VarBinary)
+            {
+                Direction = ParameterDirection.Input,
+                Size = image.Length,
+                Value = image
+            };
+
+            var imageIdParam = new SqlParameter("@image_id", SqlDbType.Int, 4)
+            {
+                Direction = ParameterDirection.Input,
+                Value = requestId
+            };
+            SqlTransaction transaction = null;
+            //System.Diagnostics.Debug.WriteLine(sqlquery);
+            SqlCommand sqlcomm = new SqlCommand(sql_insert_string, sqlconn, transaction);
+            sqlcomm.Parameters.Add(byteParam);
+            sqlcomm.Parameters.Add(imageIdParam);
+            sqlconn.Open();
+            sqlcomm.ExecuteNonQuery();
+        }
+
+        public static void InsertNewBrand(string newBrand)
+        {
+            //string mainconn2 = "Server=localhost\\SQLEXPRESS;Database=PRUV;Trusted_Connection=True;";
+            SqlConnection sqlconn = new SqlConnection(connectionString);
+            string sqlquery = $"insert into Brand (Name) values ('{newBrand}')";
+            SqlCommand sqlcomm = new SqlCommand(sqlquery, sqlconn);
+            sqlconn.Open();
+            sqlcomm.ExecuteNonQuery();
+
+        }
+
+        public static int CreateRequestID(int loc)
+        {
+            // query gathers the count of requests for given locoation to assign a new RequestId unique to
+            // the location
+            int id = 0;
+            //string mainconn = "Server=localhost\\SQLEXPRESS;Database=PRUV;Trusted_Connection=True;";
+            SqlConnection sqlconn = new SqlConnection(connectionString);
+            string sqlquery = $"select count(*) from UserRequest where StoreID = {loc}";
+            SqlCommand sqlcomm = new SqlCommand(sqlquery, sqlconn);
+            sqlconn.Open();
+            SqlDataAdapter adapter = new SqlDataAdapter(sqlcomm);
+            DataTable dt = new DataTable();
+            adapter.Fill(dt);
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+
+                id = (int.Parse(dt.Rows[i][0].ToString()!));
+
+            }
+            id += loc * 100000;
+            return id;
+        }
+
     }
 
     

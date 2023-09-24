@@ -44,7 +44,11 @@ namespace PRUV_WebApp.Controllers
             var storeUser = await _context.StoreUser
                 .FirstOrDefaultAsync(m => m.EmpId == id);
 
-            if (storeUser == null) return View("Create");
+            if (storeUser == null)
+            {
+                ViewBag.Locations = new SelectList(DBCall.PopulateDropDown("Locations", 0));
+                return View("Create");
+            }
             else
             {
                 Global.empNum = storeUser.EmpId;
@@ -52,7 +56,7 @@ namespace PRUV_WebApp.Controllers
 
                 return _context.Request != null ?
                         View("Details", storeUser) :
-                        Problem("Entity set 'ApplicationDbContext.Request'  is null."); 
+                        Problem("Entity set 'ApplicationDbContext.Request'  is null.");
             }
 
 
