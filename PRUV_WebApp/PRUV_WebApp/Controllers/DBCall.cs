@@ -11,8 +11,6 @@ namespace PRUV_WebApp.Controllers
         private static string connectionString = "Server=localhost\\SQLEXPRESS;Database=PRUV;Trusted_Connection=True;";
         public static int GetDBId(string name, string table)
         {
-            
-            //string mainconn2 = "Server=localhost\\SQLEXPRESS;Database=PRUV;Trusted_Connection=True;";
             SqlConnection sqlconn2 = new SqlConnection(connectionString);
             string sqlquery2 = $"select * from {table} where Name = '{name}'";
             System.Diagnostics.Debug.WriteLine(sqlquery2);
@@ -21,13 +19,14 @@ namespace PRUV_WebApp.Controllers
             SqlDataAdapter adapter2 = new SqlDataAdapter(sqlcomm2);
             DataTable dt2 = new DataTable();
             adapter2.Fill(dt2);
+            sqlconn2.Close();
             return int.Parse(dt2.Rows[0][0].ToString()!);
+            
         }
 
         public static List<JoinedRequest> GetJoinedRequests()
         {
             var list = new List<JoinedRequest>();
-            //string mainconn = "Server=localhost\\SQLEXPRESS;Database=PRUV;Trusted_Connection=True;";
             SqlConnection sqlconn = new SqlConnection(connectionString);
             string sqlquery = "select UserRequest.Id, RequestId, StoreID, RequestYear, Brand.Name, RequestModel, CaseOption.Name, datediff(minute, Created, GetDate()) " +
                 "\r\nfrom UserRequest" +
@@ -54,6 +53,7 @@ namespace PRUV_WebApp.Controllers
                 list.Add(jr);
 
             }
+            sqlconn.Close();
             return list;
         }
 
@@ -61,7 +61,6 @@ namespace PRUV_WebApp.Controllers
         {
             
             // joint query to gather item data from related tables
-            //string mainconn = "Server=localhost\\SQLEXPRESS;Database=PRUV;Trusted_Connection=True;";
             SqlConnection sqlconn = new SqlConnection(connectionString);
             string sqlquery = "select UserRequest.Id, UserRequest.RequestId, StoreID, RequestYear, Brand.Name, RequestModel, CaseOption.Name, CONVERT(VARCHAR(19),Created,100), RequestImage " +
                 "\r\nfrom UserRequest" +
@@ -89,7 +88,7 @@ namespace PRUV_WebApp.Controllers
                 jr.Created = dt.Rows[i][7].ToString();
                 jr.image = (byte[])dt.Rows[i][8];
             }
-
+            sqlconn.Close();
             return jr;
         }
 
@@ -99,7 +98,6 @@ namespace PRUV_WebApp.Controllers
             List<string> list = new List<string>();
 
             // query table for values to populate list using column and table parameters
-            //string mainconn = "Server=localhost\\SQLEXPRESS;Database=PRUV;Trusted_Connection=True;";
             SqlConnection sqlconn = new SqlConnection(connectionString);
             string sqlquery = $"select * from {table}";
             SqlCommand sqlcomm = new SqlCommand(sqlquery, sqlconn);
@@ -113,32 +111,29 @@ namespace PRUV_WebApp.Controllers
                 list.Add(dt.Rows[i][column].ToString()!);
 
             }
-
+            sqlconn.Close();
             return list;
         }
 
         public static string SetDefaultValue(int id, string table, string columnName, int column)
         {
 
-            //string mainconn2 = "Server=localhost\\SQLEXPRESS;Database=PRUV;Trusted_Connection=True;";
             SqlConnection sqlconn = new SqlConnection(connectionString);
             string sqlquery = $"select * from {table} where {columnName} = '{id}'";
-            //System.Diagnostics.Debug.WriteLine(sqlquery);
             SqlCommand sqlcomm = new SqlCommand(sqlquery, sqlconn);
             sqlconn.Open();
             SqlDataAdapter adapter = new SqlDataAdapter(sqlcomm);
             DataTable dt = new DataTable();
             adapter.Fill(dt);
+            sqlconn.Close();
             return dt.Rows[0][column].ToString()!;
+           
         }
 
         public static void AddImage(int? requestId, byte[]? image)
         {
-            //string bytes = image.ToString();
 
-            //string mainconn = "Server=localhost\\SQLEXPRESS;Database=PRUV;Trusted_Connection=True;";
             SqlConnection sqlconn = new SqlConnection(connectionString);
-            //string sqlquery = $"insert into RequestImage (RequestId,RequestImage) values ({requestId},CAST('{bytes}' AS VARBINARY(MAX)))";
             const string sql_insert_string =
                 "Insert into RequestImage (RequestId,RequestImage) values (@image_id, @image_byte_array)";
             var byteParam = new SqlParameter("@image_byte_array", SqlDbType.VarBinary)
@@ -154,22 +149,23 @@ namespace PRUV_WebApp.Controllers
                 Value = requestId
             };
             SqlTransaction transaction = null;
-            //System.Diagnostics.Debug.WriteLine(sqlquery);
             SqlCommand sqlcomm = new SqlCommand(sql_insert_string, sqlconn, transaction);
             sqlcomm.Parameters.Add(byteParam);
             sqlcomm.Parameters.Add(imageIdParam);
             sqlconn.Open();
             sqlcomm.ExecuteNonQuery();
+            sqlconn.Close();
         }
 
         public static void InsertNewBrand(string newBrand)
         {
-            //string mainconn2 = "Server=localhost\\SQLEXPRESS;Database=PRUV;Trusted_Connection=True;";
+
             SqlConnection sqlconn = new SqlConnection(connectionString);
             string sqlquery = $"insert into Brand (Name) values ('{newBrand}')";
             SqlCommand sqlcomm = new SqlCommand(sqlquery, sqlconn);
             sqlconn.Open();
             sqlcomm.ExecuteNonQuery();
+            sqlconn.Close();
 
         }
 
@@ -178,7 +174,6 @@ namespace PRUV_WebApp.Controllers
             // query gathers the count of requests for given locoation to assign a new RequestId unique to
             // the location
             int id = 0;
-            //string mainconn = "Server=localhost\\SQLEXPRESS;Database=PRUV;Trusted_Connection=True;";
             SqlConnection sqlconn = new SqlConnection(connectionString);
             string sqlquery = $"select count(*) from UserRequest where StoreID = {loc}";
             SqlCommand sqlcomm = new SqlCommand(sqlquery, sqlconn);
@@ -192,6 +187,7 @@ namespace PRUV_WebApp.Controllers
                 id = (int.Parse(dt.Rows[i][0].ToString()!));
 
             }
+            sqlconn.Close();
             id += loc * 100000;
             return id;
         }

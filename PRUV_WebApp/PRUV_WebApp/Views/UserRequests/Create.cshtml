@@ -17,26 +17,19 @@
         <form asp-action="Create" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             
-            <label asp-for="StoreID" class="control-label">Location</label>
-
+            <label asp-for="StoreID" class="control-label"><b>Location</label>
             @Html.DropDownList("StoreID", ViewBag.Locations, "Select Location", new { id="locs", @class="form-control"})
 
-            <label asp-for="UserID" class="control-label">Location</label>
-
+            <label asp-for="UserID" class="control-label">Employee ID</label>
             @Html.DropDownList("UserID", ViewBag.Employees, "Select Location", new { id="locs", @class="form-control"})
 
-            @* <div class="form-group">
-                <label asp-for="UserID" class="control-label">Employee Number</label>
-                <input asp-for="UserID" id="userID" class="form-control" />
-                <span asp-validation-for="UserID" class="text-danger"></span>
-            </div> *@
             <div class="form-group">
-                <label asp-for="RequestYear" class="control-label">Year</label>
+                <label asp-for="RequestYear" class="control-label">Year or Decade</label>
                 <input asp-for="RequestYear" class="form-control" />
                 <span asp-validation-for="RequestYear" class="text-danger"></span>
             </div>
-            <label asp-for="BrandId" class="control-label">Brand</label>
 
+            <label asp-for="BrandId" class="control-label">Brand (Select "Other" if Brand is not found)</label>
             @Html.DropDownList("BrandId", ViewBag.BrandList, "Select Brand", new { id="brands", @class="form-control"})
             
 
@@ -58,16 +51,15 @@
 
                 });
 
+
                 function UpdateDivVisibility(isVisible) {
                     if (isVisible == "Other") {
                         $("#newBrand").show();
-                        //
-
+                        $("#newBrand").focus();
                     }
                     else {
-                        //
                         $("#newBrand").hide();
-                        //$("#newBrand").val($("#brands").val(););
+
                     }
                 }
 
@@ -76,19 +68,15 @@
             <div class="form-group" id="newBrand">
                 <label for="newBrand" class="control-label">Enter a new Brand</label>
                 <input name="newBrand" class="form-control" />
-
+                <span asp-validation-for="StoreID" class="text-danger"></span>
             </div>
 
-            @* <div class="form-group" id="newBrand">
-                <label asp-for="BrandId" class="control-label">Enter Brand</label>
-                <input asp-for="BrandId" class="form-control" />
-                <span asp-validation-for="BrandId" class="text-danger"></span>
-            </div> *@
             <div class="form-group">
                 <label asp-for="RequestModel" class="control-label">Model</label>
                 <input asp-for="RequestModel" class="form-control" />
                 <span asp-validation-for="RequestModel" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="Serial" class="control-label">Serial Number</label>
                 <input asp-for="Serial" class="form-control" />
@@ -107,45 +95,24 @@
             </div>
           
             <label asp-for="BrandId" class="control-label">Case</label>
-
             @Html.DropDownList("CaseId", ViewBag.Cases, "Select Option", new { id="caseOption", @class="form-control"})
-
-          
+        
             <div class="mb-3">
                <label class="form-label">Image</label>
                <input type="file" name="imageFile" class="form-control" />
 
             </div>
-            
-            @* <div class="row">
-                <div class="col-md-2">
-                    <label>Photo: </label>
 
-                </div>
-                <div class="col-md-10">
-                    <input id="txtFile" type="file" name="file" value="Upload File" style="width:100%;" />
-
-                </div>
-
-            </div> *@
-         
-
-            <div class="col-md-6">
-                <img id="imgViewer" src="../Views/UserRequests/test.jpeg" width="200" height="200" style="border:1px solid#000000;" />
-            </div>
             <br/>
             <br/>
           
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Confirm" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

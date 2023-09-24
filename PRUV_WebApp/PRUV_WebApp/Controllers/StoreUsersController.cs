@@ -40,14 +40,18 @@ namespace PRUV_WebApp.Controllers
         //PoST: Requests/ShowSEarchResults
         public async Task<IActionResult> ShowSearchResults(int? id)
         {
+            if (id != null)
+                    Global.empNum = id.Value;
  
             var storeUser = await _context.StoreUser
                 .FirstOrDefaultAsync(m => m.EmpId == id);
 
             if (storeUser == null)
             {
+                storeUser = new StoreUser();
+                storeUser.EmpId = Global.empNum;
                 ViewBag.Locations = new SelectList(DBCall.PopulateDropDown("Locations", 0));
-                return View("Create");
+                return View("Create", storeUser);
             }
             else
             {
@@ -62,7 +66,7 @@ namespace PRUV_WebApp.Controllers
 
         }
 
-        public int? GetStoreUserId(int? empId)
+/*        public int? GetStoreUserId(int? empId)
         {       
             string mainconn = "Server=localhost\\SQLEXPRESS;Database=PRUV;Trusted_Connection=True;";
             SqlConnection sqlconn = new SqlConnection(mainconn);
@@ -73,7 +77,7 @@ namespace PRUV_WebApp.Controllers
             DataTable dt = new DataTable();
             adapter2.Fill(dt);
             return int.Parse(dt.Rows[0][0].ToString()!);
-        }
+        }*/
 
         public StoreUser UserExists(int empNum)
         {
