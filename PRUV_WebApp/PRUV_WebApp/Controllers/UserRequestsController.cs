@@ -13,8 +13,7 @@ using Microsoft.AspNetCore.Http;
 using System.Web;
 using System.Text;
 using Microsoft.AspNetCore.Mvc.Routing;
-
-
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace PRUV_WebApp.Controllers
 {
@@ -35,7 +34,7 @@ namespace PRUV_WebApp.Controllers
         // GET: UserRequests
         public async Task<IActionResult> Index()
         {
-            
+            // Refresh page to show new incoming Requests
             Response.Headers.Add("Refresh", "5");
             // custom class JoinedRequest holds joined table data form custom query
             return View(GetJoinedRequests());
@@ -44,6 +43,7 @@ namespace PRUV_WebApp.Controllers
         // GET: UserRequests/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+            // get item data with joint table query, send item to view
             JoinedRequest item = GetItemData(id);
             return View(item);
         }
@@ -83,64 +83,14 @@ namespace PRUV_WebApp.Controllers
             return jr;
         }
 
-        public byte[] GetImage(string sBase64String)
+
+
+        public List<string> PopulateDropDown(string table, int column, int selectedItem = 0) 
         {
-            byte[] bytes = null;
-            if (!string.IsNullOrEmpty(sBase64String))
-            {
-                bytes = Convert.FromBase64String(sBase64String);
-            }
-            return bytes;
-        }
-
-        public void PopulateBrandDropDown()
-        {
-
-            string mainconn = "Server=localhost\\SQLEXPRESS;Database=PRUV;Trusted_Connection=True;";
-            SqlConnection sqlconn = new SqlConnection(mainconn);
-            string sqlquery = "select * from Brand";
-            SqlCommand sqlcomm = new SqlCommand(sqlquery, sqlconn);
-            sqlconn.Open();
-            SqlDataAdapter adapter = new SqlDataAdapter(sqlcomm);
-            DataTable dt = new DataTable();
-            adapter.Fill(dt);
-            for (int i = 0; i < dt.Rows.Count; i++)
-            {
-
-                Brands.Add(dt.Rows[i][1].ToString()!);
-
-            }
-
-            ViewBag.BrandList = new SelectList(Brands);
-
-        }
-
-        public void PopulateLocationDown()
-        {
-
-            string mainconn = "Server=localhost\\SQLEXPRESS;Database=PRUV;Trusted_Connection=True;";
-            SqlConnection sqlconn = new SqlConnection(mainconn);
-            string sqlquery = "select locationId from Locations";
-            SqlCommand sqlcomm = new SqlCommand(sqlquery, sqlconn);
-            sqlconn.Open();
-            SqlDataAdapter adapter = new SqlDataAdapter(sqlcomm);
-            DataTable dt = new DataTable();
-            adapter.Fill(dt);
-            for (int i = 0; i < dt.Rows.Count; i++)
-            {
-
-                Locations.Add(int.Parse(dt.Rows[i][0].ToString()!));
-
-            }
-
-            ViewBag.Locations = new SelectList(Locations);
-
-        }
-
-        public List<string> PopulateDropDown(string table, int column) 
-        {
+            // new list that will be retunred for drop down menu
             List<string> list = new List<string>();
 
+            // query table for values to populate list using column and table parameters
             string mainconn = "Server=localhost\\SQLEXPRESS;Database=PRUV;Trusted_Connection=True;";
             SqlConnection sqlconn = new SqlConnection(mainconn);
             string sqlquery = $"select * from {table}";
@@ -151,13 +101,14 @@ namespace PRUV_WebApp.Controllers
             adapter.Fill(dt);
             for (int i = 0; i < dt.Rows.Count; i++)
             {
-
+                // add value to list
                 list.Add(dt.Rows[i][column].ToString()!);
 
             }
 
             return list; 
         }
+
 
 
         public List<JoinedRequest> GetJoinedRequests()
@@ -195,6 +146,8 @@ namespace PRUV_WebApp.Controllers
 
         public int CreateRequestID(int loc)
         {
+            // query gathers the count of requests for given locoation to assign a new RequestId unique to
+            // the location
             int id = 0;
             string mainconn = "Server=localhost\\SQLEXPRESS;Database=PRUV;Trusted_Connection=True;";
             SqlConnection sqlconn = new SqlConnection(mainconn);
@@ -227,6 +180,21 @@ namespace PRUV_WebApp.Controllers
             DataTable dt2 = new DataTable();
             adapter2.Fill(dt2);
             return int.Parse(dt2.Rows[0][0].ToString()!);
+        }
+
+        public string DefaultValue(int id, string table, string columnName, int column)
+        {
+
+            string mainconn2 = "Server=localhost\\SQLEXPRESS;Database=PRUV;Trusted_Connection=True;";
+            SqlConnection sqlconn2 = new SqlConnection(mainconn2);
+            string sqlquery2 = $"select * from {table} where {columnName} = '{id}'";
+            System.Diagnostics.Debug.WriteLine(sqlquery2);
+            SqlCommand sqlcomm2 = new SqlCommand(sqlquery2, sqlconn2);
+            sqlconn2.Open();
+            SqlDataAdapter adapter2 = new SqlDataAdapter(sqlcomm2);
+            DataTable dt2 = new DataTable();
+            adapter2.Fill(dt2);
+            return dt2.Rows[0][column].ToString()!;
         }
 
         public void AddImage(int? requestId, byte[]? image)
@@ -262,29 +230,6 @@ namespace PRUV_WebApp.Controllers
 
         }
 
-        /*public byte[]? ConvertImageFile(IFormFile imageFile)
-        {
-            byte[]? image = null;
-
-            if(imageFile.Length > 0)
-            {
-                using(var ms = new MemoryStream())
-                {
-                    imageFile.CopyTo(ms);
-                    image = ms.ToArray();
-
-                }
-                string filePath = "C:\\Users\\timeg\\PRUV\\PRUV_prototype\\PRUV_WebApp\\PRUV_WebApp\\Views\\UserRequests\\test.jpeg" ;
-                using var stream = System.IO.File.Create(filePath);
-                stream.Write(image, 0, image.Length);
-
-            }
-
-
-            return image;
-
-
-        }*/
 
         public void InsertNewBrand(string newBrand)
         {
@@ -300,11 +245,11 @@ namespace PRUV_WebApp.Controllers
         // GET: UserRequests/Create
         public IActionResult Create()
         {
-            //PopulateBrandDropDown();
-            //PopulateLocationDown();
-
+             
             ViewBag.BrandList = new SelectList(PopulateDropDown("Brand", 1));
-            ViewBag.Locations = new SelectList(PopulateDropDown("Locations", 1));
+            ViewBag.Locations = new SelectList(PopulateDropDown("Locations", 1), DefaultValue(Global.empLoc, "Locations", "LocationID", 1)) ;
+            ViewBag.Employees = new SelectList(PopulateDropDown("StoreUser", 5), DefaultValue(Global.empNum, "StoreUser", "EmpId", 5));
+
             ViewBag.Cases = new SelectList(PopulateDropDown("CaseOption", 1));
             return View();
         }
@@ -316,7 +261,17 @@ namespace PRUV_WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,RequestID,RequestYear,RequestModel,Serial,UserID,Intiated,InitiatedBy,InitiatedAt,Details,AskingPrice,Cost,Retail,Created")] UserRequest userRequest, string StoreID, string BrandId, string? newBrand, string? CaseId,IFormFile imageFile)
         {
-            //[FromForm(Name = "imageFile")] 
+            if(Global.empNum != 0)
+            {
+                userRequest.UserID = Global.empNum;
+            }
+
+            if(Global.empLoc != 0)
+            {
+                userRequest.StoreID = Global.empLoc;
+            }
+            else userRequest.StoreID = int.Parse(StoreID);
+
             if (BrandId == "Other")
             {
                 InsertNewBrand(newBrand);
@@ -326,7 +281,7 @@ namespace PRUV_WebApp.Controllers
             else userRequest.BrandId = GetDBId(BrandId, "Brand");
 
             if(CaseId != null) userRequest.CaseId = GetDBId(CaseId, "CaseOption");
-            userRequest.StoreID = int.Parse(StoreID);
+            
             userRequest.RequestID = CreateRequestID(userRequest.StoreID);
             userRequest.Created = DateTime.Now;
             bool state = ModelState.IsValid;
@@ -340,8 +295,6 @@ namespace PRUV_WebApp.Controllers
 
             
             ViewBag.Cases = new SelectList(PopulateDropDown("CaseOption", 1));
-            //PopulateBrandDropDown();
-            //PopulateLocationDown();
             ViewBag.BrandList = new SelectList(PopulateDropDown("Brand", 1));
             ViewBag.Locations = new SelectList(PopulateDropDown("Locations", 1));
             return View(userRequest);

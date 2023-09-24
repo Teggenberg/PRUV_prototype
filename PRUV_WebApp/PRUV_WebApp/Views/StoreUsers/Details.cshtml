@@ -4,11 +4,15 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<h1>Pricing Request</h1>
 
 <div>
-    <h4>StoreUser</h4>
+    <h4>Emplyee Info</h4>
     <hr />
+    <div>
+        <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> 
+        @* <a asp-action="Index">Back to List</a> *@
+    </div>
     <dl class="row">
         
         <dt class = "col-sm-2">
@@ -35,14 +39,14 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Email)
         </dd>
-        </br>
+        
         <div class="form-group">
             
             <a class="btn btn-primary" asp-area="" asp-controller="UserRequests" asp-action="Create">Request Pricing</a>
         </div>
     </dl>
 </div>
-<div>
+@* <div>
     <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
-</div>
+</div> *@

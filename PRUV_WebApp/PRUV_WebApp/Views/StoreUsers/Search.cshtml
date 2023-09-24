@@ -1,6 +1,6 @@
 ﻿@model PRUV_WebApp.Models.StoreUser
 
-<h4>StoreUser</h4>
+<h4>User Info</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -11,6 +11,7 @@
                 <input asp-for="Id" name="id" class="form-control" />
                 <span asp-validation-for="Id" class="text-danger"></span>
             </div>
+            <br>
         
             <div class="form-group">
                 <input type="submit" value="Search" class="btn btn-primary" />
@@ -19,9 +20,9 @@
     </div>
 </div>
 
-<div>
+@* <div>
     <a asp-action="Index">Back to List</a>
-</div>
+</div> *@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

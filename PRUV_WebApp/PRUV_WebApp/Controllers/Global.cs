@@ -2,10 +2,15 @@
 {
     public static class Global
     {
+        public static int empNum = 0;
+        public static int empLoc = 0;
+
+
         public static byte[] ConvertImageFile(IFormFile imageFile)
         {
             byte[]? image = null;
 
+            
             if (imageFile.Length > 0)
             {
                 using (var ms = new MemoryStream())

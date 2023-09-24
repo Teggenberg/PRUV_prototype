@@ -46,9 +46,14 @@ namespace PRUV_WebApp.Controllers
 
             if (storeUser == null) return View("Create");
             else
-            return _context.Request != null ?
+            {
+                Global.empNum = storeUser.EmpId;
+                Global.empLoc = storeUser.Store;
+
+                return _context.Request != null ?
                         View("Details", storeUser) :
-                        Problem("Entity set 'ApplicationDbContext.Request'  is null.");
+                        Problem("Entity set 'ApplicationDbContext.Request'  is null."); 
+            }
 
 
         }
@@ -88,6 +93,8 @@ namespace PRUV_WebApp.Controllers
                 return NotFound();
             }
 
+            
+
             return View(storeUser);
         }
 
@@ -109,6 +116,9 @@ namespace PRUV_WebApp.Controllers
                 UserRequest ur = new UserRequest();
                 ur.StoreID = storeUser.Store;
                 ur.UserID = storeUser.EmpId;
+
+                Global.empNum = storeUser.EmpId;
+                Global.empLoc = storeUser.Store;
 
                 _context.Add(storeUser);
                 await _context.SaveChangesAsync();
@@ -139,7 +149,7 @@ namespace PRUV_WebApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Store,FirstName,LastName,Email")] StoreUser storeUser)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,EmpId,Store,FirstName,LastName,Email")] StoreUser storeUser)
         {
             if (id != storeUser.Id)
             {
@@ -164,7 +174,10 @@ namespace PRUV_WebApp.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                //return RedirectToAction(nameof(Index));
+                Global.empNum = storeUser.EmpId;
+                Global.empLoc = storeUser.Store;
+                return View("Create", "UserRequests");
             }
             return View(storeUser);
         }
