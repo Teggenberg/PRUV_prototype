@@ -37,14 +37,14 @@ namespace PRUV_WebApp.Controllers
             // Refresh page to show new incoming Requests
             Response.Headers.Add("Refresh", "5");
             // custom class JoinedRequest holds joined table data form custom query
-            return View(GetJoinedRequests());
+            return View(DBCall.GetJoinedRequests());
         }
 
         // GET: UserRequests/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             // get item data with joint table query, send item to view
-            JoinedRequest item = GetItemData(id);
+            JoinedRequest item = DBCall.GetItemData(id);
             return View(item);
         }
 
@@ -275,12 +275,12 @@ namespace PRUV_WebApp.Controllers
             if (BrandId == "Other")
             {
                 InsertNewBrand(newBrand);
-                userRequest.BrandId = GetDBId(newBrand, "Brand");
+                userRequest.BrandId = DBCall.GetDBId(newBrand, "Brand");
 
             }
-            else userRequest.BrandId = GetDBId(BrandId, "Brand");
+            else userRequest.BrandId = DBCall.GetDBId(BrandId, "Brand");
 
-            if(CaseId != null) userRequest.CaseId = GetDBId(CaseId, "CaseOption");
+            if(CaseId != null) userRequest.CaseId = DBCall.GetDBId(CaseId, "CaseOption");
             
             userRequest.RequestID = CreateRequestID(userRequest.StoreID);
             userRequest.Created = DateTime.Now;

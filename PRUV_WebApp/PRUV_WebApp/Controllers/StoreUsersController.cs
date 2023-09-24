@@ -177,7 +177,7 @@ namespace PRUV_WebApp.Controllers
                 //return RedirectToAction(nameof(Index));
                 Global.empNum = storeUser.EmpId;
                 Global.empLoc = storeUser.Store;
-                return View("Create", "UserRequests");
+                return RedirectToAction("Create", "UserRequests");
             }
             return View(storeUser);
         }
