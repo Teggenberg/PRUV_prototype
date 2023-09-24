@@ -101,6 +101,7 @@ namespace PRUV_WebApp.Controllers
         // GET: StoreUsers/Create
         public IActionResult Create()
         {
+            ViewBag.Locations = new SelectList(DBCall.PopulateDropDown("Locations", 0));
             return View();
         }
 
@@ -125,7 +126,9 @@ namespace PRUV_WebApp.Controllers
                 //return RedirectToAction(nameof(Index));
                 return RedirectToAction("Create", "UserRequests", ur);
             }
-            return View("Views/UserRequests/Create");
+            ViewBag.Locations = new SelectList(DBCall.PopulateDropDown("Locations", 0));
+            return View();
+            //return View("Views/UserRequests/Create");
         }
 
         // GET: StoreUsers/Edit/5
