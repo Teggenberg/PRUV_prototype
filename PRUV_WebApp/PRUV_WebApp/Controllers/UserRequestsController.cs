@@ -72,17 +72,8 @@ namespace PRUV_WebApp.Controllers
             ([Bind("Id,RequestID,RequestYear,RequestModel,Serial,UserID,Intiated,InitiatedBy,InitiatedAt,Details,AskingPrice,Cost,Retail,Created")] 
             UserRequest userRequest, string StoreID, string BrandId, string? newBrand, string? CaseId,IFormFile imageFile)
         {
-            /*if(Global.empNum != 0)
-            {
-                userRequest.UserID = Global.empNum;
-            }
 
-            if(Global.empLoc != 0)
-            {
-                userRequest.StoreID = Global.empLoc;
-            }*/
-            /*else*/ 
-            if(BrandId == "Other" && newBrand == null)
+        /*    if(BrandId == "Other" && newBrand == null)
             {
                 ViewBag.BrandList = new SelectList(DBCall.PopulateDropDown("Brand", 1));
                 ViewBag.Locations = new SelectList
@@ -92,7 +83,7 @@ namespace PRUV_WebApp.Controllers
 
                 ViewBag.Cases = new SelectList(DBCall.PopulateDropDown("CaseOption", 1));
                 return View(userRequest);
-            }
+            }*/
             userRequest.StoreID = int.Parse(StoreID);
 
             if (BrandId == "Other")
@@ -110,16 +101,20 @@ namespace PRUV_WebApp.Controllers
             bool state = ModelState.IsValid;
             if (state)
             {
-                DBCall.AddImage(userRequest.RequestID, Global.ConvertImageFile(imageFile));
+                DBCall.AddImageToDB(userRequest.RequestID, Global.ConvertImageFile(imageFile));
                 _context.Add(userRequest);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
 
-            
-            ViewBag.Cases = new SelectList(DBCall.PopulateDropDown("CaseOption", 1));
+
             ViewBag.BrandList = new SelectList(DBCall.PopulateDropDown("Brand", 1));
-            ViewBag.Locations = new SelectList(DBCall.PopulateDropDown("Locations", 1));
+            ViewBag.Locations = new SelectList
+                (DBCall.PopulateDropDown("Locations", 0), DBCall.SetDefaultValue(Global.empLoc, "Locations", "LocationID", 0));
+            ViewBag.Employees = new SelectList
+                (DBCall.PopulateDropDown("StoreUser", 5), DBCall.SetDefaultValue(Global.empNum, "StoreUser", "EmpId", 5));
+
+            ViewBag.Cases = new SelectList(DBCall.PopulateDropDown("CaseOption", 1));
             return View(userRequest);
         }
 

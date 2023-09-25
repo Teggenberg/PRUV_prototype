@@ -130,7 +130,7 @@ namespace PRUV_WebApp.Controllers
            
         }
 
-        public static void AddImage(int? requestId, byte[]? image)
+        public static void AddImageToDB(int? requestId, byte[]? image)
         {
 
             SqlConnection sqlconn = new SqlConnection(connectionString);
