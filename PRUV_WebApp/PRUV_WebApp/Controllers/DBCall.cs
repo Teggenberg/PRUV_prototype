@@ -25,7 +25,7 @@ namespace PRUV_WebApp.Controllers
             
         }
 
-        public static List<JoinedRequest> GetJoinedRequests()
+        public static List<JoinedRequest> GetJoinedRequestsIndex()
         {
             var list = new List<JoinedRequest>();
             SqlConnection sqlconn = new SqlConnection(connectionString);
@@ -58,7 +58,7 @@ namespace PRUV_WebApp.Controllers
             return list;
         }
 
-        public static JoinedRequest GetItemData(int? id)
+        public static JoinedRequest GetJoinedRequestDetails(int? id)
         {
             
             // joint query to gather item data from related tables

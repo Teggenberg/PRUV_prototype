@@ -37,14 +37,14 @@ namespace PRUV_WebApp.Controllers
             // Refresh page to show new incoming Requests
             Response.Headers.Add("Refresh", "5");
             // custom class JoinedRequest holds joined table data form custom query
-            return View(DBCall.GetJoinedRequests());
+            return View(DBCall.GetJoinedRequestsIndex());
         }
 
         // GET: UserRequests/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             // get item data with joint table query, send item to view
-            JoinedRequest item = DBCall.GetItemData(id);
+            JoinedRequest item = DBCall.GetJoinedRequestDetails(id);
             return View(item);
         }
 
