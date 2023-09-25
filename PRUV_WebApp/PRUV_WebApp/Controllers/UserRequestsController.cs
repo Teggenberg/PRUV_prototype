@@ -104,6 +104,7 @@ namespace PRUV_WebApp.Controllers
                 DBCall.AddImageToDB(userRequest.RequestID, Global.ConvertImageFile(imageFile));
                 _context.Add(userRequest);
                 await _context.SaveChangesAsync();
+                Global.SendNotification(DBCall.GetEmailInfo(userRequest.Id));
                 return RedirectToAction(nameof(Index));
             }
 

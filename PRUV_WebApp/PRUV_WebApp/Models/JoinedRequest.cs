@@ -7,6 +7,10 @@
         public int? Store { get; set; }
         public string? Year { get; set; }
 
+        public string? UserName { get; set; }
+
+        public string? Email { get; set; }
+
         public string? Brand { get; set; }
         public string? Model { get; set; }
 

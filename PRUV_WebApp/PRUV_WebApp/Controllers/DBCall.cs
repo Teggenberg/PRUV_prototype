@@ -3,6 +3,7 @@ using PRUV_WebApp.Models;
 using System.Data;
 using Microsoft.Extensions.Configuration;
 using System.Configuration;
+using System.Net.NetworkInformation;
 
 namespace PRUV_WebApp.Controllers
 {
@@ -90,6 +91,42 @@ namespace PRUV_WebApp.Controllers
             }
             sqlconn.Close();
             return jr;
+        }
+
+        public static JoinedRequest GetEmailInfo(int id)
+        {
+            // joint query to gather item data from related tables
+            SqlConnection sqlconn = new SqlConnection(connectionString);
+            string sqlquery = "select UserRequest.Id, UserRequest.RequestId, StoreID, RequestYear, Brand.Name, RequestModel, CaseOption.Name, CONVERT(VARCHAR(19),Created,100), FirstName, StoreUser.Email" +
+                "\r\nfrom UserRequest" +
+                "\r\nJoin Brand on UserRequest.BrandId = Brand.Id" +
+                "\r\nLeft Join CaseOption on UserRequest.CaseId = CaseOption.Id" +
+                "\r\nLeft Join StoreUser on UserRequest.UserID = StoreUser.empId" +
+                $"\r\nWhere UserRequest.Id = {id};";
+            JoinedRequest jr = new JoinedRequest();
+            SqlCommand sqlcomm = new SqlCommand(sqlquery, sqlconn);
+            sqlconn.Open();
+            SqlDataAdapter adapter = new SqlDataAdapter(sqlcomm);
+            DataTable dt = new DataTable();
+            adapter.Fill(dt);
+
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                // populate object with data table data
+                jr.Id = int.Parse(dt.Rows[i][0].ToString()!);
+                jr.RequestID = int.Parse(dt.Rows[i][1].ToString()!);
+                jr.Store = int.Parse(dt.Rows[i][2].ToString()!);
+                jr.Year = dt.Rows[i][3].ToString()!;
+                jr.Brand = dt.Rows[i][4].ToString()!;
+                jr.Model = dt.Rows[i][5].ToString()!;
+                jr.Case = dt.Rows[i][6].ToString()!;
+                jr.Created = dt.Rows[i][7].ToString();
+                jr.UserName = dt.Rows[i][8].ToString();
+                jr.Email = dt.Rows[i][9].ToString();
+            }
+            sqlconn.Close();
+            return jr;
+
         }
 
         public static List<string> PopulateDropDown(string table, int column)
