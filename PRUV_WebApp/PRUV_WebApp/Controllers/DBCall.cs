@@ -87,10 +87,32 @@ namespace PRUV_WebApp.Controllers
                 jr.Model = dt.Rows[i][5].ToString()!;
                 jr.Case = dt.Rows[i][6].ToString()!;
                 jr.Created = dt.Rows[i][7].ToString();
-                jr.image = (byte[])dt.Rows[i][8];
+                
             }
             sqlconn.Close();
+            jr.images = GetRequestImages(jr.RequestID);
             return jr;
+        }
+
+        public static List<byte[]>? GetRequestImages(int requestId)
+        {
+            List<byte[]> imageList = new List<byte[]>();
+
+            SqlConnection sqlconn = new SqlConnection(connectionString);
+            string sqlquery = $"select RequestImage from RequestImage where RequestId = {requestId};";
+            JoinedRequest jr = new JoinedRequest();
+            SqlCommand sqlcomm = new SqlCommand(sqlquery, sqlconn);
+            sqlconn.Open();
+            SqlDataAdapter adapter = new SqlDataAdapter(sqlcomm);
+            DataTable dt = new DataTable();
+            adapter.Fill(dt);
+            for(int i = 0; i < dt.Rows.Count; i++)
+            {
+                imageList.Add((byte[])dt.Rows[i][0]);
+            }
+
+
+            return imageList;
         }
 
         public static JoinedRequest GetEmailInfo(int id)
