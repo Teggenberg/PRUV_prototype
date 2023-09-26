@@ -70,7 +70,7 @@ namespace PRUV_WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create
             ([Bind("Id,RequestID,RequestYear,RequestModel,Serial,UserID,Intiated,InitiatedBy,InitiatedAt,Details,AskingPrice,Cost,Retail,Created")] 
-            UserRequest userRequest, string StoreID, string BrandId, string? newBrand, string? CaseId,IFormFile imageFile)
+            UserRequest userRequest, string StoreID, string BrandId, string? newBrand, string? CaseId,List<IFormFile> imageFile)
         {
 
         /*    if(BrandId == "Other" && newBrand == null)
@@ -101,7 +101,12 @@ namespace PRUV_WebApp.Controllers
             bool state = ModelState.IsValid;
             if (state)
             {
-                DBCall.AddImageToDB(userRequest.RequestID, Global.ConvertImageFile(imageFile));
+                foreach(var image in imageFile)
+                {
+                    DBCall.AddImageToDB(userRequest.RequestID, Global.ConvertImageFile(image));
+
+                }
+                
                 _context.Add(userRequest);
                 await _context.SaveChangesAsync();
                 Global.SendNotification(DBCall.GetEmailInfo(userRequest.Id));
