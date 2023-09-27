@@ -106,7 +106,8 @@ namespace PRUV_WebApp.Controllers
             SqlDataAdapter adapter = new SqlDataAdapter(sqlcomm);
             DataTable dt = new DataTable();
             adapter.Fill(dt);
-            for(int i = 0; i < dt.Rows.Count; i++)
+            for(
+                int i = 0; i < dt.Rows.Count; i++)
             {
                 imageList.Add((byte[])dt.Rows[i][0]);
             }
