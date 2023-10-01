@@ -8,7 +8,7 @@ namespace PRUV_WebApp.Controllers
         // store user info across views
         public static int empNum = 0;
         public static int empLoc = 0;
-        public static string vintageBuys = "TimeggenbergerGC@gmail.com";
+        public static string vintageBuys = "vintagebuys@guitarcenter.com";
 
         public static byte[] ConvertImageFile(IFormFile imageFile)
         {
