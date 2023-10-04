@@ -1,0 +1,38 @@
+﻿@model PRUV_WebApp.Models.UserRequest
+
+<h4>Add Additionl Photos</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="AddImages" enctype="multipart/form-data" AllowMultiple="true" runat="server">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="RequestID" class="control-label">Request Number</label>
+                <input asp-for="RequestID" name="id" class="form-control" />
+                <span asp-validation-for="RequestID" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Image</label>
+
+                <input type="file" name="imageFile" class="form-control" multiple="multiple" AllowMultiple="true" />
+
+            </div>
+            <br>
+
+            <div class="form-group">
+                <input type="submit" value="Upload Images" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@* <div>
+    <a asp-action="Index">Back to List</a>
+</div> *@
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
