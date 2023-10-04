@@ -13,7 +13,7 @@ namespace PRUV_WebApp.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20230903231505_UserRequest")]
-    partial class UserRequest
+    partial class UserRequests
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

@@ -14,6 +14,7 @@ using System.Web;
 using System.Text;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using PRUV_WebApp.Data.Migrations;
 
 namespace PRUV_WebApp.Controllers
 {
@@ -122,6 +123,26 @@ namespace PRUV_WebApp.Controllers
 
             ViewBag.Cases = new SelectList(DBCall.PopulateDropDown("CaseOption", 1));
             return View(userRequest);
+        }
+
+        public async Task<IActionResult> AddImages()
+        {
+            
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddImages(int requestId, List<IFormFile> imageFile)
+        {
+            if(imageFile != null)
+            {
+                foreach (var image in imageFile)
+                {
+                    DBCall.AddImageToDB(requestId, Global.ConvertImageFile(image));
+
+                }
+            }
+            return View();
         }
 
         // GET: UserRequests/Edit/5

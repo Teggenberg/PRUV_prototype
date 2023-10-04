@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace PRUV_WebApp.Data.Migrations
 {
-    public partial class UserRequest : Migration
+    public partial class UserRequests : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
