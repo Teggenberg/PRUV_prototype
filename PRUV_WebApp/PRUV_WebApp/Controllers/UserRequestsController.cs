@@ -145,6 +145,11 @@ namespace PRUV_WebApp.Controllers
             return View();
         }
 
+        public async Task<IActionResult> SearchRequests()
+        {
+            return View();
+        }
+
         // GET: UserRequests/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
