@@ -134,7 +134,7 @@ namespace PRUV_WebApp.Controllers
         [HttpPost]
         public async Task<IActionResult> AddImages(int requestId, List<IFormFile> imageFile)
         {
-            if(imageFile != null)
+            if(imageFile != null) 
             {
                 foreach (var image in imageFile)
                 {
