@@ -258,8 +258,8 @@ namespace PRUV_WebApp.Controllers
             SqlConnection sqlconn = new SqlConnection(connectionString);
             string sqlquery = "select UserRequest.Id, RequestId, StoreID, concat(RequestYear, ' ', Brand.Name, ' ', RequestModel) " +
                 "\r\nfrom UserRequest" +
-                "\r\nJoin Brand on UserRequest.BrandId = Brand.Id;";
-                
+                "\r\nJoin Brand on UserRequest.BrandId = Brand.Id" +
+                $"\r\nWhere UserRequest.UserID = {emp};";
             SqlCommand sqlcomm = new SqlCommand(sqlquery, sqlconn);
             sqlconn.Open();
             SqlDataAdapter adapter = new SqlDataAdapter(sqlcomm);

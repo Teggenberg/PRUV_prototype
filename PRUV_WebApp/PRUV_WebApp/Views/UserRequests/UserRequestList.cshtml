@@ -14,14 +14,14 @@
         <tr>
             
             <th>
-                @Html.DisplayNameFor(model => model.Store)
+                @* @Html.DisplayNameFor(model => model.Store) *@ Hello
             </th>
-            <th>
+           @*  <th>
                 @Html.DisplayNameFor(model => model.Year)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Brand)
-            </th>
+            </th> *@
             <th>
                 @Html.DisplayNameFor(model => model.Model)
             </th>
@@ -39,16 +39,16 @@
             <tr>
                
                 <td>
-                    @Html.DisplayFor(modelItem => item.Store)
+                    @Html.DisplayFor(modelItem => item.RequestID)
                 </td>
-                <td>
+                @* <td>
                     @Html.DisplayFor(modelItem => item.Year)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Brand)
-                </td>
+                </td> *@
                 <td>
-                    @Html.DisplayFor(modelItem => item.Model)
+                    <a asp-action="Details" asp-route-id="@item.Id">@item.Model</a>
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Created)
