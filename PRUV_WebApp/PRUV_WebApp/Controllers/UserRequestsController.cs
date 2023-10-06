@@ -150,6 +150,18 @@ namespace PRUV_WebApp.Controllers
             return View();
         }
 
+        [HttpPost]
+        public async Task<IActionResult> SearchRequests(int empId)
+        {
+            List<JoinedRequest> jr = DBCall.ManageRequestList(empId);
+            return View("UserRequestList", jr);
+        }
+
+        public async Task<IActionResult> UserRequestList()
+        {
+            return View();
+        }
+
         // GET: UserRequests/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
