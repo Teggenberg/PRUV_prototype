@@ -125,10 +125,11 @@ namespace PRUV_WebApp.Controllers
             return View(userRequest);
         }
 
-        public async Task<IActionResult> AddImages()
+        public async Task<IActionResult> AddImages(int? Id)
         {
+            JoinedRequest userRequest = DBCall.GetJoinedRequestDetails(Id);
             
-            return View();
+            return View(userRequest);
         }
 
         [HttpPost]
