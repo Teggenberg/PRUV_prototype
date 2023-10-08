@@ -1,7 +1,9 @@
 ﻿@model PRUV_WebApp.Models.JoinedRequest
 
-<h4>Add Additionl Photos</h4>
+<h4>Add Additionl Photos for @Model.RequestID</h4><br />
+@Model.Year @Model.Brand @Model.Model
 <hr />
+
 <div class="row">
     <div class="col-md-4">
         <form asp-action="AddImages" enctype="multipart/form-data" AllowMultiple="true" runat="server">

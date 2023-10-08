@@ -142,6 +142,7 @@ namespace PRUV_WebApp.Controllers
                     DBCall.AddImageToDB(requestId, Global.ConvertImageFile(image));
 
                 }
+                return RedirectToAction("ThankYou", "Home");
             }
             return View();
         }
