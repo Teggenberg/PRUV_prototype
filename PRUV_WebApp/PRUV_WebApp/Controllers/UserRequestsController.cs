@@ -74,17 +74,7 @@ namespace PRUV_WebApp.Controllers
             UserRequest userRequest, string StoreID, string BrandId, string? newBrand, string? CaseId,List<IFormFile> imageFile)
         {
 
-        /*    if(BrandId == "Other" && newBrand == null)
-            {
-                ViewBag.BrandList = new SelectList(DBCall.PopulateDropDown("Brand", 1));
-                ViewBag.Locations = new SelectList
-                    (DBCall.PopulateDropDown("Locations", 0), DBCall.SetDefaultValue(Global.empLoc, "Locations", "LocationID", 0));
-                ViewBag.Employees = new SelectList
-                    (DBCall.PopulateDropDown("StoreUser", 5), DBCall.SetDefaultValue(Global.empNum, "StoreUser", "EmpId", 5));
-
-                ViewBag.Cases = new SelectList(DBCall.PopulateDropDown("CaseOption", 1));
-                return View(userRequest);
-            }*/
+        
             userRequest.StoreID = int.Parse(StoreID);
 
             if (BrandId == "Other")
@@ -111,7 +101,7 @@ namespace PRUV_WebApp.Controllers
                 _context.Add(userRequest);
                 await _context.SaveChangesAsync();
                 Global.SendNotification(DBCall.GetEmailInfo(userRequest.Id));
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("ThankYou", "Home");
             }
 
 
@@ -178,6 +168,11 @@ namespace PRUV_WebApp.Controllers
                 return NotFound();
             }
             return View(userRequest);
+        }
+
+        public async Task<IActionResult> IntakeForms()
+        {
+            return View();
         }
 
         // POST: UserRequests/Edit/5

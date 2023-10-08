@@ -1,0 +1,73 @@
+﻿@model IEnumerable<PRUV_WebApp.Models.JoinedRequest>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Search </h1>
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="IntakeForms">
+            
+            <div class="form-group" id="newBrand">
+                <label for="newBrand" class="control-label">Enter a new Brand</label>
+                <input name="newBrand" class="form-control" />
+                
+            </div>
+            <br>
+
+            <div class="form-group">
+                <input type="submit" value="Search" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+
+            <th>
+                @* @Html.DisplayNameFor(model => model.Store) *@ Hello
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Model)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Created)
+            </th>
+
+
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if(Model != null)
+        {
+            @foreach (var item in Model)
+            {
+                <tr>
+
+                    <td>
+                        @Html.DisplayFor(modelItem => item.RequestID)
+                    </td>
+     
+                    <td>
+                        <a asp-action="AddImages" asp-route-id="@item.Id">@item.Model</a>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Created)
+                    </td>
+
+
+                </tr>
+            }
+            
+        }
+        
+    </tbody>
+</table>

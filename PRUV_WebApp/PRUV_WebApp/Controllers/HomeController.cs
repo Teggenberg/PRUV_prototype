@@ -18,6 +18,11 @@ namespace PRUV_WebApp.Controllers
             return View();
         }
 
+        public IActionResult ThankYou()
+        {
+            return View();
+        }
+
         public IActionResult Privacy()
         {
             return View();
