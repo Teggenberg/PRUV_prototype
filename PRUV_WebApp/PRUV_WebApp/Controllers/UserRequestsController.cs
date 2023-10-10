@@ -154,6 +154,22 @@ namespace PRUV_WebApp.Controllers
             return View();
         }
 
+        public async Task<IActionResult> IntakeForms()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> IntakeForms(int empNum)
+        {
+            if (empNum != null)
+            {
+                List<JoinedRequest> jr = DBCall.ManageRequestList(empNum);
+                return View(jr);
+            }
+            return View();
+        }
+
         // GET: UserRequests/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -170,10 +186,7 @@ namespace PRUV_WebApp.Controllers
             return View(userRequest);
         }
 
-        public async Task<IActionResult> IntakeForms()
-        {
-            return View();
-        }
+        
 
         // POST: UserRequests/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
