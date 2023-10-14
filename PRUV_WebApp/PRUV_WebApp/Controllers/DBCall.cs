@@ -32,7 +32,8 @@ namespace PRUV_WebApp.Controllers
             string sqlquery = "select UserRequest.Id, RequestId, StoreID, RequestYear, Brand.Name, RequestModel, CaseOption.Name, datediff(minute, Created, GetDate()), Intiated " +
                 "\r\nfrom UserRequest" +
                 "\r\nJoin Brand on UserRequest.BrandId = Brand.Id" +
-                "\r\nLeft Join CaseOption on UserRequest.CaseId = CaseOption.Id;";
+                "\r\nLeft Join CaseOption on UserRequest.CaseId = CaseOption.Id" +
+                "\r\nwhere Intiated = 0;";
             SqlCommand sqlcomm = new SqlCommand(sqlquery, sqlconn);
             sqlconn.Open();
             SqlDataAdapter adapter = new SqlDataAdapter(sqlcomm);
