@@ -223,6 +223,13 @@ namespace PRUV_WebApp.Controllers
             }
             return View(userRequest);
         }
+        /*[HttpPost]*/
+        public async Task<IActionResult> Initiate(int id)
+        {
+            DBCall.Initiate(id);
+            JoinedRequest item = DBCall.GetJoinedRequestDetails(id);
+            return View("Details",item);
+        }
 
         // GET: UserRequests/Delete/5
         public async Task<IActionResult> Delete(int? id)

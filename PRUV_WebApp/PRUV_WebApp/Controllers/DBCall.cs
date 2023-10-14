@@ -29,7 +29,7 @@ namespace PRUV_WebApp.Controllers
         {
             var list = new List<JoinedRequest>();
             SqlConnection sqlconn = new SqlConnection(connectionString);
-            string sqlquery = "select UserRequest.Id, RequestId, StoreID, RequestYear, Brand.Name, RequestModel, CaseOption.Name, datediff(minute, Created, GetDate()) " +
+            string sqlquery = "select UserRequest.Id, RequestId, StoreID, RequestYear, Brand.Name, RequestModel, CaseOption.Name, datediff(minute, Created, GetDate()), Intiated " +
                 "\r\nfrom UserRequest" +
                 "\r\nJoin Brand on UserRequest.BrandId = Brand.Id" +
                 "\r\nLeft Join CaseOption on UserRequest.CaseId = CaseOption.Id;";
@@ -49,6 +49,11 @@ namespace PRUV_WebApp.Controllers
                 jr.Model = dt.Rows[i][5].ToString()!;
                 jr.Case = dt.Rows[i][6].ToString()!;
                 jr.Created = dt.Rows[i][7].ToString() + " minutes ago";
+                if (dt.Rows[i][8] != null)
+                {
+                    jr.Initiated = (bool)dt.Rows[i][8];
+                }
+                else jr.Initiated = false;
                 System.Diagnostics.Debug.WriteLine(dt.Rows[i][7]);
                 System.Diagnostics.Debug.WriteLine(jr.Created);
                 list.Add(jr);
@@ -63,7 +68,7 @@ namespace PRUV_WebApp.Controllers
             
             // joint query to gather item data from related tables
             SqlConnection sqlconn = new SqlConnection(connectionString);
-            string sqlquery = "select UserRequest.Id, UserRequest.RequestId, StoreID, RequestYear, Brand.Name, RequestModel, CaseOption.Name, CONVERT(VARCHAR(19),Created,100), RequestImage " +
+            string sqlquery = "select UserRequest.Id, UserRequest.RequestId, StoreID, RequestYear, Brand.Name, RequestModel, CaseOption.Name, CONVERT(VARCHAR(19),Created,100), RequestImage, Intiated " +
                 "\r\nfrom UserRequest" +
                 "\r\nJoin Brand on UserRequest.BrandId = Brand.Id" +
                 "\r\nLeft Join CaseOption on UserRequest.CaseId = CaseOption.Id" +
@@ -87,6 +92,7 @@ namespace PRUV_WebApp.Controllers
                 jr.Model = dt.Rows[i][5].ToString()!;
                 jr.Case = dt.Rows[i][6].ToString()!;
                 jr.Created = dt.Rows[i][7].ToString();
+                jr.Initiated = (bool?)dt.Rows[i][9];
                 
             }
             sqlconn.Close();
@@ -278,6 +284,19 @@ namespace PRUV_WebApp.Controllers
             }
             sqlconn.Close();
             return list;
+        }
+
+        public static void Initiate(int id)
+        {
+            SqlConnection sqlconn = new SqlConnection(connectionString);
+            string sqlquery = "update UserRequest" +
+                "\r\nset Intiated = 1" +
+                $"\r\nWhere UserRequest.Id = {id};";
+            SqlCommand sqlcomm = new SqlCommand(sqlquery, sqlconn);
+            sqlconn.Open();
+            sqlcomm.ExecuteNonQuery();
+            sqlconn.Close();
+
         }
 
     }

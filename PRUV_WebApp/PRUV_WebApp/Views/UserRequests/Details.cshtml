@@ -3,16 +3,17 @@
 @{
     ViewData["Title"] = "Details";
     var images = Model.images;
+    bool? initialized = Model.Initiated;
 }
 
-<h1>Details</h1>
-@if(Model.Initiated == false)
+<h1>@Model.RequestID</h1>
+@if(initialized != true)
 {
-    <input type="submit" value="Initiate" class="btn btn-primary" />
+    <a asp-action="Initiate" asp-route-id="@Model?.Id">Initiate</a>
 }
 
 <div>
-    <h4>UserRequest</h4>
+    @* <h4>UserRequest</h4> *@
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
