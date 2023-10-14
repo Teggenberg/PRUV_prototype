@@ -89,6 +89,7 @@ namespace PRUV_WebApp.Controllers
             
             userRequest.RequestID = DBCall.CreateRequestID(userRequest.StoreID);
             userRequest.Created = DateTime.Now;
+            userRequest.Intiated = false;
             bool state = ModelState.IsValid;
             if (state)
             {

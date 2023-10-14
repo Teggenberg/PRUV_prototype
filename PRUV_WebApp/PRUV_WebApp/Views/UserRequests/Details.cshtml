@@ -6,6 +6,10 @@
 }
 
 <h1>Details</h1>
+@if(Model.Initiated == false)
+{
+    <input type="submit" value="Initiate" class="btn btn-primary" />
+}
 
 <div>
     <h4>UserRequest</h4>

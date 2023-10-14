@@ -17,6 +17,8 @@
         public string? Case { get; set; }
         public string? Created { get; set; }
 
+        public bool? Initiated { get; set; }
+
         public List<byte[]>? images { get; set; }
     }
 }
