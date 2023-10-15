@@ -25,7 +25,7 @@ namespace PRUV_WebApp.Controllers
             
         }
 
-        public static List<JoinedRequest> GetJoinedRequestsIndex()
+        public static List<JoinedRequest> GetJoinedRequestsIndex(int init)
         {
             var list = new List<JoinedRequest>();
             SqlConnection sqlconn = new SqlConnection(connectionString);
@@ -33,7 +33,7 @@ namespace PRUV_WebApp.Controllers
                 "\r\nfrom UserRequest" +
                 "\r\nJoin Brand on UserRequest.BrandId = Brand.Id" +
                 "\r\nLeft Join CaseOption on UserRequest.CaseId = CaseOption.Id" +
-                "\r\nwhere Intiated = 0;";
+                $"\r\nwhere Intiated = {init};";
             SqlCommand sqlcomm = new SqlCommand(sqlquery, sqlconn);
             sqlconn.Open();
             SqlDataAdapter adapter = new SqlDataAdapter(sqlcomm);
@@ -291,7 +291,8 @@ namespace PRUV_WebApp.Controllers
         {
             SqlConnection sqlconn = new SqlConnection(connectionString);
             string sqlquery = "update UserRequest" +
-                "\r\nset Intiated = 1" +
+                "\r\nset Intiated = 1," +
+                "\r\nInitiatedAt = GETDATE()" +
                 $"\r\nWhere UserRequest.Id = {id};";
             SqlCommand sqlcomm = new SqlCommand(sqlquery, sqlconn);
             sqlconn.Open();

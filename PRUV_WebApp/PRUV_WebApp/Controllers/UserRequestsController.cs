@@ -38,7 +38,16 @@ namespace PRUV_WebApp.Controllers
             // Refresh page to show new incoming Requests
             Response.Headers.Add("Refresh", "5");
             // custom class JoinedRequest holds joined table data form custom query
-            return View(DBCall.GetJoinedRequestsIndex());
+            return View(DBCall.GetJoinedRequestsIndex(0));
+        }
+
+        // GET: UserRequests
+        public async Task<IActionResult> InitiatedIndex()
+        {
+            // Refresh page to show new incoming Requests
+            Response.Headers.Add("Refresh", "5");
+            // custom class JoinedRequest holds joined table data form custom query
+            return View("Index",DBCall.GetJoinedRequestsIndex(1));
         }
 
         // GET: UserRequests/Details/5
