@@ -243,10 +243,10 @@ namespace PRUV_WebApp.Controllers
         }
 
         // GET: UserRequests/Details/5
-        public async Task<IActionResult> IntakeForm(int? id)
+        public async Task<IActionResult> IntakeForm(int? empNum)
         {
             // get item data with joint table query, send item to view
-            JoinedRequest item = DBCall.GetIntakeForm(id);
+            JoinedRequest item = DBCall.GetIntakeForm(empNum);
             return View(item);
         }
 

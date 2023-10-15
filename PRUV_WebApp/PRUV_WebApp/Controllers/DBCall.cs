@@ -33,7 +33,8 @@ namespace PRUV_WebApp.Controllers
                 "\r\nfrom UserRequest" +
                 "\r\nJoin Brand on UserRequest.BrandId = Brand.Id" +
                 "\r\nLeft Join CaseOption on UserRequest.CaseId = CaseOption.Id" +
-                $"\r\nwhere Intiated = {init};";
+                $"\r\nwhere Intiated = {init}" +
+                "and Cost is null;";
             SqlCommand sqlcomm = new SqlCommand(sqlquery, sqlconn);
             sqlconn.Open();
             SqlDataAdapter adapter = new SqlDataAdapter(sqlcomm);
@@ -267,7 +268,7 @@ namespace PRUV_WebApp.Controllers
                 "\r\nfrom UserRequest" +
                 "\r\nJoin Brand on UserRequest.BrandId = Brand.Id" +
                 $"\r\nWhere UserRequest.UserID = {emp}" +
-                "\r\nand Cost is not null;";
+                "\r\nand Cost is null;";
             SqlCommand sqlcomm = new SqlCommand(sqlquery, sqlconn);
             sqlconn.Open();
             SqlDataAdapter adapter = new SqlDataAdapter(sqlcomm);
@@ -327,8 +328,8 @@ namespace PRUV_WebApp.Controllers
                 "\r\nJoin Brand on UserRequest.BrandId = Brand.Id" +
                 "\r\nLeft Join CaseOption on UserRequest.CaseId = CaseOption.Id" +
                 
-                $"\r\nWhere UserRequest.Id = {id}" +
-                "\r\nand cost is not null;";
+                $"\r\nWhere UserRequest.UserId = {id}" +
+                "\r\nand Cost is not null;";
             JoinedRequest jr = new JoinedRequest();
             SqlCommand sqlcomm = new SqlCommand(sqlquery, sqlconn);
             sqlconn.Open();
@@ -348,7 +349,7 @@ namespace PRUV_WebApp.Controllers
                 jr.Case = dt.Rows[i][6].ToString()!;
                 jr.Created = dt.Rows[i][7].ToString();
                 jr.Notes = dt.Rows[i][8].ToString()!;
-                jr.Cost = int.Parse(dt.Rows[i][9].ToString()!);
+                jr.Cost = int.Parse(dt.Rows[i][9].ToString());
                 jr.Retail = int.Parse(dt.Rows[i][10].ToString()!);
                 jr.Serial = dt.Rows[i][11].ToString()!;
 

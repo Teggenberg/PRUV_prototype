@@ -9,8 +9,8 @@
 <h1>@Model.RequestID</h1>
 @if(initialized != true)
 {
-    
-    <a asp-action="Initiate" >Initiate</a>
+
+    <a asp-action="Initiate" asp-route-id="@Model?.Id">Initiate</a>
 }
 else
 {
