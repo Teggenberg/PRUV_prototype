@@ -17,6 +17,11 @@
         public string? Case { get; set; }
         public string? Created { get; set; }
 
+        public string? Notes { get; set; }
+        public string? Serial { get; set; }
+        public int? Cost { get; set; }
+        public int? Retail { get; set; }
+
         public bool? Initiated { get; set; }
 
         public List<byte[]>? images { get; set; }

@@ -1,20 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using PRUV_WebApp.Data;
 using PRUV_WebApp.Models;
-using Microsoft.AspNetCore.Http;
-using System.Web;
-using System.Text;
-using Microsoft.AspNetCore.Mvc.Routing;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using PRUV_WebApp.Data.Migrations;
 
 namespace PRUV_WebApp.Controllers
 {
@@ -238,6 +226,28 @@ namespace PRUV_WebApp.Controllers
             DBCall.Initiate(id);
             JoinedRequest item = DBCall.GetJoinedRequestDetails(id);
             return View("Details",item);
+        }
+
+        
+        public async Task<IActionResult> ProvidePrice(int id, int cost, int retail)
+        {
+            
+
+            if(cost != null && retail != null)
+            {
+                DBCall.UpdateCostRetail(id,cost,retail);
+                return View("Index", DBCall.GetJoinedRequestsIndex(0));
+            }
+            JoinedRequest item = DBCall.GetJoinedRequestDetails(id);
+            return View("Details", item);
+        }
+
+        // GET: UserRequests/Details/5
+        public async Task<IActionResult> IntakeForm(int? id)
+        {
+            // get item data with joint table query, send item to view
+            JoinedRequest item = DBCall.GetIntakeForm(id);
+            return View(item);
         }
 
         // GET: UserRequests/Delete/5

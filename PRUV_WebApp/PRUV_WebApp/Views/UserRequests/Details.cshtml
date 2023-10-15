@@ -9,7 +9,27 @@
 <h1>@Model.RequestID</h1>
 @if(initialized != true)
 {
-    <a asp-action="Initiate" asp-route-id="@Model?.Id">Initiate</a>
+    
+    <a asp-action="Initiate" >Initiate</a>
+}
+else
+{
+    <div class="col-md-4" >
+        <form asp-action="ProvidePrice" asp-route-id="@Model?.Id">
+            <div class="form-group" id="cost">
+                <label for="cost" class="control-label">Cost:</label>
+                <input name="cost" class="form-control" input type="number" />
+
+            </div>
+            <div class="form-group" id="retail">
+                <label for="retail" class="control-label">Retail:</label>
+                <input name="retail" class="form-control" input type="number" />
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Confirm" class="btn btn-primary" />
+            </div>
+        </form>>
+    </div>
 }
 
 <div>

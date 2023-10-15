@@ -266,7 +266,8 @@ namespace PRUV_WebApp.Controllers
             string sqlquery = "select UserRequest.Id, RequestId, StoreID, concat(RequestYear, ' ', Brand.Name, ' ', RequestModel) " +
                 "\r\nfrom UserRequest" +
                 "\r\nJoin Brand on UserRequest.BrandId = Brand.Id" +
-                $"\r\nWhere UserRequest.UserID = {emp};";
+                $"\r\nWhere UserRequest.UserID = {emp}" +
+                "\r\nand Cost is not null;";
             SqlCommand sqlcomm = new SqlCommand(sqlquery, sqlconn);
             sqlconn.Open();
             SqlDataAdapter adapter = new SqlDataAdapter(sqlcomm);
@@ -299,6 +300,62 @@ namespace PRUV_WebApp.Controllers
             sqlcomm.ExecuteNonQuery();
             sqlconn.Close();
 
+        }
+
+        public static void UpdateCostRetail(int id, int cost, int retail)
+        {
+
+            SqlConnection sqlconn = new SqlConnection(connectionString);
+            string sqlquery = "update UserRequest" +
+                $"\r\nset Cost = {cost}," +
+                $"\r\nRetail = {retail}" +
+                $"\r\nWhere UserRequest.Id = {id};";
+            SqlCommand sqlcomm = new SqlCommand(sqlquery, sqlconn);
+            sqlconn.Open();
+            sqlcomm.ExecuteNonQuery();
+            sqlconn.Close();
+
+        }
+
+        public static JoinedRequest GetIntakeForm(int? id)
+        {
+
+            // joint query to gather item data from related tables
+            SqlConnection sqlconn = new SqlConnection(connectionString);
+            string sqlquery = "select UserRequest.Id, UserRequest.RequestId, StoreID, RequestYear, Brand.Name, RequestModel, CaseOption.Name, CONVERT(VARCHAR(19),Created,100), Details, Cost, Retail, Serial " +
+                "\r\nfrom UserRequest" +
+                "\r\nJoin Brand on UserRequest.BrandId = Brand.Id" +
+                "\r\nLeft Join CaseOption on UserRequest.CaseId = CaseOption.Id" +
+                
+                $"\r\nWhere UserRequest.Id = {id}" +
+                "\r\nand cost is not null;";
+            JoinedRequest jr = new JoinedRequest();
+            SqlCommand sqlcomm = new SqlCommand(sqlquery, sqlconn);
+            sqlconn.Open();
+            SqlDataAdapter adapter = new SqlDataAdapter(sqlcomm);
+            DataTable dt = new DataTable();
+            adapter.Fill(dt);
+
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                // populate object with data table data
+                jr.Id = int.Parse(dt.Rows[i][0].ToString()!);
+                jr.RequestID = int.Parse(dt.Rows[i][1].ToString()!);
+                jr.Store = int.Parse(dt.Rows[i][2].ToString()!);
+                jr.Year = dt.Rows[i][3].ToString()!;
+                jr.Brand = dt.Rows[i][4].ToString()!;
+                jr.Model = dt.Rows[i][5].ToString()!;
+                jr.Case = dt.Rows[i][6].ToString()!;
+                jr.Created = dt.Rows[i][7].ToString();
+                jr.Notes = dt.Rows[i][8].ToString()!;
+                jr.Cost = int.Parse(dt.Rows[i][9].ToString()!);
+                jr.Retail = int.Parse(dt.Rows[i][10].ToString()!);
+                jr.Serial = dt.Rows[i][11].ToString()!;
+
+            }
+            sqlconn.Close();
+            
+            return jr;
         }
 
     }
