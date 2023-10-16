@@ -162,7 +162,7 @@ namespace PRUV_WebApp.Controllers
         {
             if (empNum != null)
             {
-                List<JoinedRequest> jr = DBCall.ManageRequestList(empNum);
+                List<JoinedRequest> jr = DBCall.GetFormList(empNum);
                 return View(jr);
             }
             return View();
@@ -233,7 +233,7 @@ namespace PRUV_WebApp.Controllers
         {
             
 
-            if(cost != null && retail != null)
+            if(cost != 0 && retail != 0)
             {
                 DBCall.UpdateCostRetail(id,cost,retail);
                 return View("Index", DBCall.GetJoinedRequestsIndex(0));
@@ -243,10 +243,10 @@ namespace PRUV_WebApp.Controllers
         }
 
         // GET: UserRequests/Details/5
-        public async Task<IActionResult> IntakeForm(int? empNum)
+        public async Task<IActionResult> IntakeForm(int? id)
         {
             // get item data with joint table query, send item to view
-            JoinedRequest item = DBCall.GetIntakeForm(empNum);
+            JoinedRequest item = DBCall.GetIntakeForm(id);
             return View(item);
         }
 

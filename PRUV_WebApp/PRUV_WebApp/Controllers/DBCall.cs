@@ -289,6 +289,35 @@ namespace PRUV_WebApp.Controllers
             return list;
         }
 
+        public static List<JoinedRequest> GetFormList(int emp)
+        {
+            var list = new List<JoinedRequest>();
+            SqlConnection sqlconn = new SqlConnection(connectionString);
+            string sqlquery = "select UserRequest.Id, RequestId, StoreID, concat(RequestYear, ' ', Brand.Name, ' ', RequestModel) " +
+                "\r\nfrom UserRequest" +
+                "\r\nJoin Brand on UserRequest.BrandId = Brand.Id" +
+                $"\r\nWhere UserRequest.UserID = {emp}" +
+                "\r\nand Cost is not null;";
+            SqlCommand sqlcomm = new SqlCommand(sqlquery, sqlconn);
+            sqlconn.Open();
+            SqlDataAdapter adapter = new SqlDataAdapter(sqlcomm);
+            DataTable dt = new DataTable();
+            adapter.Fill(dt);
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                JoinedRequest jr = new JoinedRequest();
+                jr.Id = int.Parse(dt.Rows[i][0].ToString()!);
+                jr.RequestID = int.Parse(dt.Rows[i][1].ToString()!);
+                jr.Store = int.Parse(dt.Rows[i][2].ToString()!);
+                jr.Model = dt.Rows[i][3].ToString()!;
+
+                list.Add(jr);
+
+            }
+            sqlconn.Close();
+            return list;
+        }
+
         public static void Initiate(int id)
         {
             SqlConnection sqlconn = new SqlConnection(connectionString);
@@ -326,9 +355,8 @@ namespace PRUV_WebApp.Controllers
             string sqlquery = "select UserRequest.Id, UserRequest.RequestId, StoreID, RequestYear, Brand.Name, RequestModel, CaseOption.Name, CONVERT(VARCHAR(19),Created,100), Details, Cost, Retail, Serial " +
                 "\r\nfrom UserRequest" +
                 "\r\nJoin Brand on UserRequest.BrandId = Brand.Id" +
-                "\r\nLeft Join CaseOption on UserRequest.CaseId = CaseOption.Id" +
-                
-                $"\r\nWhere UserRequest.UserId = {id}" +
+                "\r\nLeft Join CaseOption on UserRequest.CaseId = CaseOption.Id" +              
+                $"\r\nWhere UserRequest.Id = {id}" +
                 "\r\nand Cost is not null;";
             JoinedRequest jr = new JoinedRequest();
             SqlCommand sqlcomm = new SqlCommand(sqlquery, sqlconn);
