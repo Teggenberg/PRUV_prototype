@@ -85,14 +85,18 @@ else
     </dl>
     
 </div>
+<div class="row">
 @foreach (var image in @images)
 {
-    <div class="row">
-        <div class="column">
-            <img src="data:image;base64,@System.Convert.ToBase64String(image)" width="300" />
+    
+        <div class="piccolumn">
+          <img class="col-sm-3" src="data:image;base64,@System.Convert.ToBase64String(image)"  />
         </div>
-    </div>
+          
+    
 }
+</div>
+</br>
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
