@@ -5,7 +5,7 @@
     var images = Model.images;
     bool? initialized = Model.Initiated;
 }
-
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
 <h1>@Model.RequestID</h1>
 @if(initialized != true)
 {
@@ -85,18 +85,69 @@ else
     </dl>
     
 </div>
-<div class="row">
+<div class="picrow">
 @foreach (var image in @images)
 {
     
         <div class="piccolumn">
-          <img class="col-sm-3" src="data:image;base64,@System.Convert.ToBase64String(image)"  />
+            <a href="#" class="pop">
+            <img id="imageresource" class="col-md-8" src="data:image;base64,@System.Convert.ToBase64String(image)" onclick="myFunction(this);" />
+            </a>
         </div>
           
     
 }
 </div>
-</br>
+
+<!-- The expanding image container -->
+<div class="piccontainer">
+    <!-- Close the image -->
+    <span onclick="this.parentElement.style.display='none'" class="closebtn">&times;</span>
+
+    <!-- Expanded image -->
+    <img id="expandedImg" style="width:100%">
+
+    <!-- Image text -->
+    <div id="imgtext"></div>
+</div>
+
+<div class="modal fade" id="imagemodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
+    <div class="modal-dialog" >
+        <div class="modal-content" >
+            <div class="modal-body" >
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <img src="" class="imagepreview" style="width: 100%;">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    $(function () {
+        $('.pop').on('click', function () {
+            $('.imagepreview').attr('src', $(this).find('img').attr('src'));
+            $('#imagemodal').modal('show');
+        });
+    });
+
+    function myFunction(imgs) {
+        // Get the expanded image
+        var expandImg = document.getElementById("expandedImg");
+        // Get the image text
+        var imgText = document.getElementById("imgtext");
+        // Use the same src in the expanded image as the image being clicked on from the grid
+        expandImg.src = imgs.src;
+        // Use the value of the alt attribute of the clickable image as text inside the expanded image
+        imgText.innerHTML = imgs.alt;
+        // Show the container element (hidden with CSS)
+        expandImg.parentElement.style.display = "block";
+    }
+
+    
+
+</script>
+
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
